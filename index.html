@@ -8,20 +8,27 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/topojson-client@3"></script>
-    <script src="mapVis.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <script src="script.js" defer></script>
+    <script src="mapVis.js" defer></script>
 </head>
 <body>
-    <nav class="navigation">
-        <div class="nav-content">
-            <div class="logo">Economic Mobility Guide</div>
-            <div class="nav-links">
-                <a href="#welcome" class="nav-link">Home</a>
-                <a href="#learn-section" class="nav-link">Learn</a>
-                <a href="#quiz-section" class="nav-link">Personalize</a>
+    <header>
+        <nav class="navigation">
+            <div class="nav-content">
+                <div class="logo">Economic Mobility Guide</div>
+                <div class="nav-links">
+                    <a href="#welcome" class="nav-link">Home</a>
+                    <a href="#quiz-section" class="nav-link">Personalize</a>
+                    <a href="#opportunity-map" class="nav-link">Opportunity Map</a>
+                </div>
             </div>
-            <div class="progress-bar" id="progress-bar"></div>
-        </div>
-    </nav>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </nav>
+    </header>
 
     <main class="container">
         <section id="welcome" class="welcome-section">
@@ -122,84 +129,182 @@
 
         <section id="quiz-section" class="content-section">
             <div class="quiz-container">
-                <h2>Personalize Your Journey</h2>
+                <h2>Part 2: Personalization Quiz</h2>
                 <p class="quiz-description">Help us provide personalized guidance for your family's future</p>
                 
                 <form id="personalization-form" class="quiz-form">
-                    <div class="form-section">
-                        <h3>Your Information</h3>
-                        <div class="form-group">
-                            <label for="zipCode">Zip Code*</label>
-                            <input type="text" id="zipCode" name="zipCode" required pattern="[0-9]{5}" maxlength="5">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="income">Annual Household Income*</label>
-                            <select id="income" name="income" required>
-                                <option value="">Select income range</option>
-                                <option value="<25k">Less than $25,000</option>
-                                <option value="25-50k">$25,000 - $50,000</option>
-                                <option value="50-75k">$50,000 - $75,000</option>
-                                <option value="75-100k">$75,000 - $100,000</option>
-                                <option value=">100k">More than $100,000</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="country">Country of Origin (Optional)</label>
-                            <input type="text" id="country" name="country">
+                    <div class="form-section parent-info">
+                        <h3>Parent Information</h3>
+                        <div class="parent-fields">
+                            <div class="form-group">
+                                <label for="zipCode">Zip Code*</label>
+                                <input type="text" id="zipCode" name="zipCode" required pattern="[0-9]{5}" maxlength="5" placeholder="Enter zip code">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="income">Annual Household Income*</label>
+                                <select id="income" name="income" required>
+                                    <option value="">Select income range</option>
+                                    <option value="<25k">Less than $25,000</option>
+                                    <option value="25-50k">$25,000 - $50,000</option>
+                                    <option value="50-75k">$50,000 - $75,000</option>
+                                    <option value="75-100k">$75,000 - $100,000</option>
+                                    <option value=">100k">More than $100,000</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="country">Country of Origin (Optional)</label>
+                                <input type="text" id="country" name="country" placeholder="Enter country">
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-section" id="children-section">
-                        <h3>Children Information</h3>
-                        
-                        <div class="child-form" id="child1">
+                    <div class="form-section child-info">
+                        <h3>Child Information</h3>
+                        <div class="child-form">
                             <h4>Child 1</h4>
                             <div class="form-group">
                                 <label for="child1-name">Name*</label>
-                                <input type="text" id="child1-name" name="child1-name" required>
+                                <input type="text" id="child1-name" name="child1-name" required placeholder="Enter child's name">
                             </div>
                             
                             <div class="form-group">
                                 <label for="child1-gender">Gender*</label>
                                 <select id="child1-gender" name="child1-gender" required>
                                     <option value="">Select gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
-                                    <option value="prefer-not">Prefer not to say</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
                                 <label for="child1-age">Age*</label>
-                                <input type="number" id="child1-age" name="child1-age" min="0" max="18" required>
+                                <input type="number" id="child1-age" name="child1-age" min="0" max="18" required placeholder="Enter age">
                             </div>
                             
                             <div class="form-group">
                                 <label for="child1-ethnicity">Ethnicity*</label>
                                 <select id="child1-ethnicity" name="child1-ethnicity" required>
                                     <option value="">Select ethnicity</option>
-                                    <option value="asian">Asian</option>
-                                    <option value="black">Black or African American</option>
-                                    <option value="hispanic">Hispanic or Latino</option>
-                                    <option value="native">Native American</option>
-                                    <option value="pacific">Pacific Islander</option>
-                                    <option value="white">White</option>
-                                    <option value="mixed">Mixed Race</option>
-                                    <option value="other">Other</option>
-                                    <option value="prefer-not">Prefer not to say</option>
+                                    <option value="W">White</option>
+                                    <option value="B">Black</option>
+                                    <option value="H">Hispanic</option>
+                                    <option value="A">Asian</option>
+                                    <option value="NA">Native American</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="child-form">
+                            <h4>Child 2</h4>
+                            <div class="form-group">
+                                <label for="child2-name">Name</label>
+                                <input type="text" id="child2-name" name="child2-name" placeholder="Enter child's name">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="child2-gender">Gender</label>
+                                <select id="child2-gender" name="child2-gender">
+                                    <option value="">Select gender</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="child2-age">Age</label>
+                                <input type="number" id="child2-age" name="child2-age" min="0" max="18" placeholder="Enter age">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="child2-ethnicity">Ethnicity</label>
+                                <select id="child2-ethnicity" name="child2-ethnicity">
+                                    <option value="">Select ethnicity</option>
+                                    <option value="W">White</option>
+                                    <option value="B">Black</option>
+                                    <option value="H">Hispanic</option>
+                                    <option value="A">Asian</option>
+                                    <option value="NA">Native American</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-actions">
-                        <button type="button" id="add-child" class="secondary-btn">Add Another Child</button>
-                        <button type="submit" class="primary-btn">Get Personalized Guidance</button>
+                        <button type="submit" class="submit-btn">Update Assessment</button>
                     </div>
                 </form>
+            </div>
+        </section>
+
+        <section id="opportunity-map" class="content-section">
+            <div class="opportunity-container">
+                <h2>Opportunity Map</h2>
+                <p class="section-description">Explore economic mobility across different regions</p>
+                
+                <div class="opportunity-content">
+                    <div class="map-side">
+                        <div id="zip-map"></div>
+                        <div class="map-controls">
+                            <button class="map-toggle active" data-view="commuting">Commuting Zones</button>
+                            <button class="map-toggle" data-view="census">Census Tracts</button>
+                        </div>
+                    </div>
+                    
+                    <div class="scores-side">
+                        <div class="score-card">
+                            <h3>Opportunity Score</h3>
+                            <div class="total-score">
+                                <span id="total-score">--</span>
+                                <span class="out-of">out of 100</span>
+                            </div>
+                            
+                            <div class="score-breakdown">
+                                <h4>Score Breakdown</h4>
+                                <div class="score-item">
+                                    <div class="score-label">Segregation</div>
+                                    <div class="score-bar-container">
+                                        <div class="score-bar" id="segregation-score" style="width: 0%"></div>
+                                        <span class="score-value">--</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="score-item">
+                                    <div class="score-label">Income Inequality</div>
+                                    <div class="score-bar-container">
+                                        <div class="score-bar" id="inequality-score" style="width: 0%"></div>
+                                        <span class="score-value">--</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="score-item">
+                                    <div class="score-label">School Quality</div>
+                                    <div class="score-bar-container">
+                                        <div class="score-bar" id="school-score" style="width: 0%"></div>
+                                        <span class="score-value">--</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="score-item">
+                                    <div class="score-label">Family Structure</div>
+                                    <div class="score-bar-container">
+                                        <div class="score-bar" id="family-score" style="width: 0%"></div>
+                                        <span class="score-value">--</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="score-item">
+                                    <div class="score-label">Social Capital</div>
+                                    <div class="score-bar-container">
+                                        <div class="score-bar" id="social-score" style="width: 0%"></div>
+                                        <span class="score-value">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -228,7 +333,6 @@
         </section>
     </main>
 
-    <script src="script.js"></script>
     <script src="scroll.js"></script>
 </body>
 </html>

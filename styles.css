@@ -41,6 +41,7 @@ body {
     background-color: #ffffff;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+    height: 70px;
 }
 
 .nav-content {
@@ -48,19 +49,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    height: 100%;
 }
 
 .logo {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--primary-color);
-}
-
-.progress-bar {
-    height: 4px;
-    background-color: var(--primary-color);
-    width: 0%;
-    transition: width 0.3s ease;
 }
 
 .nav-links {
@@ -79,19 +74,31 @@ body {
 }
 
 .nav-link:hover {
-    background: #26B99A;
+    background: var(--primary-color);
     color: white;
 }
 
-@media (max-width: 768px) {
-    .nav-links {
-        gap: 1rem;
-    }
-    
-    .nav-link {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.9rem;
-    }
+/* Progress bar styles */
+.progress-container {
+    position: fixed;
+    top: 70px; /* Same as navigation height */
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #f0f0f0;
+    z-index: 999;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--primary-color);
+    width: 0;
+    transition: width 0.1s ease;
+}
+
+/* Adjust main content to account for fixed navbar */
+main {
+    padding-top: calc(70px + 4px); /* navbar height + progress bar height */
 }
 
 /* Home page styling */
@@ -219,9 +226,63 @@ body {
     margin: 0 auto;
 }
 
+/* Map container and results section styles */
+#results-section {
+    width: 100%;
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.opportunity-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.map-side {
+    width: 100%;
+    position: relative;
+}
+
+#zip-map {
+    width: 100%;
+    height: 600px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.scores-side {
+    position: sticky;
+    top: 2rem;
+}
+
+.score-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .opportunity-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .scores-side {
+        position: static;
+    }
+    
+    #zip-map {
+        height: 500px;
+    }
+}
+
 /* Main content */
 .container {
-    padding-top: 60px;
+    padding-top: 70px;
     min-height: 100vh;
     width: 100%;
 }
@@ -525,7 +586,7 @@ svg {
 }
 
 .primary-btn {
-    background: #27ae60;
+    background: #26B99A;
     color: white;
     border: none;
     padding: 1rem 2rem;
@@ -585,9 +646,9 @@ svg {
 
 /* Quiz Section */
 .quiz-container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
 .quiz-container h2 {
@@ -598,7 +659,7 @@ svg {
 
 .quiz-description {
     text-align: center;
-    color: #666;
+    color: var(--text-color);
     margin-bottom: 2rem;
 }
 
@@ -620,9 +681,10 @@ svg {
     border-bottom: 2px solid #26B99A;
 }
 
-.form-section h4 {
-    color: #2c3e50;
-    margin: 1.5rem 0 1rem;
+.parent-fields {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
 }
 
 .form-group {
@@ -652,50 +714,381 @@ svg {
     border-color: #26B99A;
 }
 
-.child-form {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 10px;
-    margin-bottom: 1.5rem;
-}
-
 .form-actions {
     display: flex;
-    gap: 1rem;
     justify-content: center;
     margin-top: 2rem;
 }
 
-.secondary-btn {
-    background: #fff;
-    color: #26B99A;
-    border: 2px solid #26B99A;
+.submit-btn {
+    background: #26B99A;
+    color: white;
+    border: none;
     padding: 0.8rem 1.5rem;
     border-radius: 25px;
     font-size: 1rem;
+    font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    min-width: 200px;
+}
+
+.submit-btn:hover {
+    background-color: #2a9f91;
+}
+
+.submit-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .parent-fields {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* Results section styles */
+.score-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.total-score {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.out-of {
+    font-size: 1rem;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+.score-breakdown {
+    margin-top: 2rem;
+}
+
+.score-item {
+    margin-bottom: 1rem;
+}
+
+.score-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.score-bar-container {
+    background: #f0f0f0;
+    height: 24px;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.score-bar {
+    height: 100%;
+    background: var(--primary-color);
+    width: 0;
+    transition: width 1s ease-in-out;
+}
+
+.score-value {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Opportunity Map Section */
+.opportunity-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.opportunity-container h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.section-description {
+    text-align: center;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+}
+
+.opportunity-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.map-side {
+    background: white;
+    padding: 1rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#zip-map {
+    width: 100%;
+    height: 600px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.map-controls {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.map-toggle {
+    background: white;
+    border: 2px solid #26B99A;
+    color: #26B99A;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
-.secondary-btn:hover {
+.map-toggle.active {
     background: #26B99A;
     color: white;
 }
 
+.scores-side {
+    position: sticky;
+    top: 90px;
+}
+
+.score-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.score-card h3 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.total-score {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #26B99A;
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+.out-of {
+    font-size: 1rem;
+    color: #666;
+    opacity: 0.7;
+}
+
+.score-breakdown {
+    margin-top: 2rem;
+}
+
+.score-breakdown h4 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.score-item {
+    margin-bottom: 1.5rem;
+}
+
+.score-label {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.score-bar-container {
+    background: #f0f0f0;
+    height: 24px;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.score-bar {
+    height: 100%;
+    background: #26B99A;
+    width: 0;
+    transition: width 1s ease-in-out;
+}
+
+.score-value {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-weight: 600;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 1200px) {
+    .opportunity-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .scores-side {
+        position: static;
+    }
+    
+    #zip-map {
+        height: 500px;
+    }
+}
+
+/* Assessment Form Styles */
+.assessment-form {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #2c4547;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #26B99A;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(38, 185, 154, 0.1);
+}
+
+#assess-btn {
+    width: 100%;
+    padding: 1rem;
+    background: #26B99A;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#assess-btn:hover {
+    background: #1e9c82;
+}
+
+/* Map Controls */
+.map-controls {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-top: 1px solid #eee;
+}
+
+.map-controls button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.map-controls button.active {
+    background: #26B99A;
+    color: white;
+    border-color: #26B99A;
+}
+
+/* Results Section */
+#results-section {
+    margin-top: 2rem;
+}
+
+#results-section.hidden {
+    display: none;
+}
+
+/* Loading State */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+    margin-right: 0.5rem;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 @media (max-width: 768px) {
-    .quiz-container {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .assessment-form {
         padding: 1rem;
-    }
-    
-    .quiz-form {
-        padding: 1.5rem;
-    }
-    
-    .form-actions {
-        flex-direction: column;
-    }
-    
-    .form-actions button {
-        width: 100%;
     }
 }
