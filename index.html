@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economic Mobility Guide</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson-client@3"></script>
+    <script src="mapVis.js"></script>
+</head>
+<body>
+    <nav class="navigation">
+        <div class="nav-content">
+            <div class="logo">Economic Mobility Guide</div>
+            <div class="nav-links">
+                <a href="#welcome" class="nav-link">Home</a>
+                <a href="#learn-section" class="nav-link">Learn</a>
+                <a href="#map-section" class="nav-link">Learn</a>
+            </div>
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section id="welcome" class="welcome-section">
+            <div class="welcome-content fade-in">
+                <h1>Building Your Child's Future</h1>
+                <p class="subtitle">A friendly guide to creating opportunities for your family</p>
+                <p class="welcome-description">
+                    Every parent dreams of giving their children the best possible future. We're here to help make that dream a reality. 
+                    This guide will walk you through practical steps and valuable resources that can open doors for your children.
+                </p>
+                <div class="key-points">
+                    <p>Here's what you'll discover:</p>
+                    <ul>
+                        <li>Simple steps to support your child's education</li>
+                        <li>Financial resources and opportunities</li>
+                        <li>Community programs and support services</li>
+                    </ul>
+                </div>
+                <p class="encouragement">
+                    Let's take this journey together, one step at a time.
+                </p>
+            </div>
+        </section>
+
+        <section id="learn-section" class="content-section">
+            <div class="content">
+                <h1>Where You Live Impacts Your Kids' Future</h1>
+                <div class="map-content-wrapper">
+                    <div class="map-text-overlay">
+                        <p class="opportunity-text">Blue areas are good for opportunity</p>
+                    </div>
+                    <div id="map-vis"></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="map-section" class="content-section">
+            <div class="map-container">
+                <h2>Where You Live Impacts Your Kids' Future</h2>
+                <div id="map-vis"></div>
+            </div>
+        </section>
+
+        <section id="section1" class="content-section">
+            <!-- Section 1 content will go here -->
+        </section>
+
+        <section id="section2" class="content-section">
+            <!-- Section 2 content will go here -->
+        </section>
+
+        <section id="section3" class="content-section">
+            <!-- Section 3 content will go here -->
+        </section>
+
+        <section id="section4" class="content-section">
+            <!-- Section 4 content will go here -->
+        </section>
+
+        <section id="section5" class="content-section">
+            <!-- Section 5 content will go here -->
+        </section>
+
+        <section id="section6" class="content-section">
+            <!-- Section 6 content will go here -->
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+    <script src="scroll.js"></script>
+</body>
+</html>

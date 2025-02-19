@@ -1,0 +1,412 @@
+/* Base styles */
+:root {
+    --primary-color: #30b4a4;
+    --secondary-color: #9dbda9;
+    --accent-color-1: #9b252f;
+    --accent-color-2: #b65441;
+    --accent-color-3: #d07e59;
+    --accent-color-4: #e5a979;
+    --accent-color-5: #f4d79e;
+    --accent-color-6: #fcfdc1;
+    --accent-color-7: #cdddb5;
+    --accent-color-8: #9dbda9;
+    --accent-color-9: #729d9d;
+    --accent-color-10: #4f7f8b;
+    --accent-color-11: #34687e;
+    --text-color: #333333;
+    --background-color: #ffffff;
+    --section-padding: 4rem 2rem;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Nunito', 'Arial', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    min-height: 100vh;
+}
+
+/* Navigation */
+.navigation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.nav-content {
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.progress-bar {
+    height: 4px;
+    background-color: var(--primary-color);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.nav-links a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+    color: var(--accent-color-10);
+}
+
+/* Home page styling */
+.content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+}
+
+.content h1 {
+    color: #26B99A;
+    font-size: 2.5em;
+    margin-bottom: 15px;
+}
+
+.content h2 {
+    font-size: 1.2em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.content p {
+    font-size: 1em;
+    line-height: 1.5;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.content-section {
+    padding: 40px 0;
+    background-color: #fff;
+}
+
+.discover-box {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+.discover-box h3 {
+    font-size: 1.1em;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.discover-box ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.discover-box li {
+    color: #26B99A;
+    margin: 10px 0;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+/* Map specific styling */
+#map-section .content,
+#learn-section .content {
+    max-width: 1000px;
+    padding: 20px 10px;
+}
+
+.map-content-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.map-text-overlay {
+    flex: 1;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.8s ease-out;
+}
+
+.opportunity-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--accent-color-11);
+    margin: 0;
+}
+
+#map-vis {
+    flex: 2;
+    min-height: 400px;
+}
+
+/* Main content */
+.container {
+    padding-top: 60px;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.welcome-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 60px 40px;
+    background-color: #fff;
+    margin-bottom: 40px;
+}
+
+.welcome-content {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.welcome-content h1 {
+    color: #26B99A;
+    font-size: 3.5em;
+    margin-bottom: 25px;
+    font-weight: 800;
+}
+
+.subtitle {
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.welcome-description {
+    font-size: 1.3em;
+    line-height: 1.6;
+    color: #555;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+.key-points {
+    background-color: #f8f9fa;
+    padding: 30px;
+    border-radius: 12px;
+    margin: 30px auto;
+    max-width: 800px;
+}
+
+.key-points p {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.key-points ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.key-points li {
+    color: #26B99A;
+    margin: 15px 0;
+    font-size: 1.3em;
+    line-height: 1.5;
+}
+
+.encouragement {
+    font-size: 1.4em;
+    color: #26B99A;
+    margin-top: 40px;
+    font-weight: 600;
+}
+
+.fade-in {
+    animation: fadeIn 1.5s ease-in;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* Map Section */
+#map-vis svg {
+    width: 100%;
+    height: 100%;
+    min-height: 4000px;
+    display: block;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+svg {
+    border: none;
+    outline: none;
+}
+
+#tooltip {
+    position: absolute;
+    padding: 12px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    pointer-events: none;
+    font-size: 14px;
+    visibility: hidden;
+    box-shadow: 2px 2px 20px rgba(0,0,0,0.1);
+}
+
+.county {
+    stroke: #fff;
+    stroke-width: 0.5;
+    transition: opacity 0.8s ease-out;
+}
+
+.state {
+    fill: none;
+    stroke: #000;
+    stroke-linejoin: round;
+}
+
+.learn-section {
+    padding: 40px 20px;
+}
+
+.learn-section h1 {
+    color: #26B99A;
+    font-size: 2.5em;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Map animation */
+#learn-section {
+    opacity: 0;
+    transition: opacity 0.8s ease-out;
+}
+
+#learn-section.fade-in-map {
+    opacity: 1;
+}
+
+/* Map colors */
+.color-01 {
+    fill: #9b252f;
+}
+
+.color-02 {
+    fill: #b65441;
+}
+
+.color-03 {
+    fill: #d07e59;
+}
+
+.color-04 {
+    fill: #e5a979;
+}
+
+.color-05 {
+    fill: #f4d79e;
+}
+
+.color-06 {
+    fill: #fcfdc1;
+}
+
+.color-07 {
+    fill: #cdddb5;
+}
+
+.color-08 {
+    fill: #9dbda9;
+}
+
+.color-09 {
+    fill: #729d9d;
+}
+
+.color-10 {
+    fill: #4f7f8b;
+}
+
+.color-11 {
+    fill: #34687e;
+}
+
+.color-error {
+    fill: #ccc;
+}
+
+/* Map content layout */
+.map-text-overlay.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Map county animations */
+.county.fade {
+    opacity: 0.1;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .welcome-section h1 {
+        font-size: 2.5rem;
+    }
+
+    .welcome-section .subtitle {
+        font-size: 1.2rem;
+    }
+
+    .welcome-description {
+        font-size: 1.1rem;
+    }
+
+    .key-points {
+        padding: 1rem;
+    }
+
+    .key-points p {
+        font-size: 1.1rem;
+    }
+
+    .key-points li {
+        font-size: 1rem;
+    }
+
+    .encouragement {
+        font-size: 1.1rem;
+    }
+}
