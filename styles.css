@@ -150,25 +150,57 @@ body {
     align-items: center;
     gap: 2rem;
     margin-top: 2rem;
+    position: relative;
 }
 
 .map-text-overlay {
-    flex: 1;
+    position: absolute;
     opacity: 0;
-    transform: translateX(-20px);
-    transition: all 0.8s ease-out;
+    transition: all 2s ease-in-out;
+    z-index: 2;
+    padding-top: 20px;
+}
+
+.blue-text {
+    left: 0;
+    transform: translateX(-100%);
+}
+
+.red-text {
+    right: 0;
+    transform: translateX(100%);
+}
+
+.map-text-overlay.show {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .opportunity-text {
     font-size: 1.5rem;
     font-weight: 600;
-    color: var(--accent-color-11);
     margin: 0;
+    white-space: nowrap;
+}
+
+.blue-text .opportunity-text {
+    color: var(--accent-color-11);
+}
+
+.red-text .opportunity-text {
+    color: var(--accent-color-1);
 }
 
 #map-vis {
-    flex: 2;
-    min-height: 400px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+}
+
+#map-vis svg {
+    display: block;
+    margin: 0 auto;
 }
 
 /* Main content */
@@ -290,14 +322,39 @@ svg {
 .county {
     stroke: #fff;
     stroke-width: 0.5;
-    transition: opacity 0.8s ease-out;
+    transition: all 2s ease-in-out;
 }
 
-.state {
-    fill: none;
-    stroke: #000;
-    stroke-linejoin: round;
+.county.color-01 { fill: var(--accent-color-1); }
+.county.color-02 { fill: var(--accent-color-2); }
+.county.color-03 { fill: var(--accent-color-3); }
+.county.color-04 { fill: var(--accent-color-4); }
+.county.color-05 { fill: var(--accent-color-5); }
+.county.hidden {
+    opacity: 0;
+    transition: opacity 1s ease-out;
 }
+
+.county {
+    opacity: 1;
+    transition: opacity 1s ease-in;
+}
+
+.county.show-blue {
+    opacity: 1;
+}
+
+.county.show-red {
+    opacity: 1;
+}
+
+/* County colors */
+.color-06 { fill: var(--accent-color-6); }
+.color-07 { fill: var(--accent-color-7); }
+.color-08 { fill: var(--accent-color-8); }
+.color-09 { fill: var(--accent-color-9); }
+.color-10 { fill: var(--accent-color-10); }
+.color-11 { fill: var(--accent-color-11); }
 
 .learn-section {
     padding: 40px 20px;
@@ -318,66 +375,6 @@ svg {
 
 #learn-section.fade-in-map {
     opacity: 1;
-}
-
-/* Map colors */
-.color-01 {
-    fill: #9b252f;
-}
-
-.color-02 {
-    fill: #b65441;
-}
-
-.color-03 {
-    fill: #d07e59;
-}
-
-.color-04 {
-    fill: #e5a979;
-}
-
-.color-05 {
-    fill: #f4d79e;
-}
-
-.color-06 {
-    fill: #fcfdc1;
-}
-
-.color-07 {
-    fill: #cdddb5;
-}
-
-.color-08 {
-    fill: #9dbda9;
-}
-
-.color-09 {
-    fill: #729d9d;
-}
-
-.color-10 {
-    fill: #4f7f8b;
-}
-
-.color-11 {
-    fill: #34687e;
-}
-
-.color-error {
-    fill: #ccc;
-}
-
-/* Map content layout */
-.map-text-overlay.show {
-    opacity: 1;
-    transform: translateX(0);
-}
-
-/* Map county animations */
-.county.fade {
-    opacity: 0.1;
 }
 
 /* Responsive design */

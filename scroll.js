@@ -1,61 +1,92 @@
-// Create Intersection Observers for different animation stages
+// Create Intersection Observer for the animation sequence
 const observerOptions = {
     root: null,
     rootMargin: '0px',
-    threshold: [0.1, 0.5, 0.8] // Different thresholds for different stages
+    threshold: 0.5
 };
 
-// Stage 1: Initial map fade in
+let animationInProgress = false;
+
+function startMapAnimation() {
+    if (animationInProgress) return;
+    animationInProgress = true;
+    
+    const counties = document.querySelectorAll('.county');
+    
+    // Reset all counties to visible
+    counties.forEach(county => {
+        county.classList.remove('hidden');
+    });
+    
+    // After 2 seconds, hide non-blue counties
+    setTimeout(() => {
+        counties.forEach(county => {
+            const colorClass = Array.from(county.classList)
+                .find(cls => cls.startsWith('color-'));
+            if (colorClass) {
+                const colorNum = parseInt(colorClass.replace('color-', ''));
+                // Hide all except blue counties (7-11)
+                if (colorNum < 7 || colorNum > 11) {
+                    county.classList.add('hidden');
+                }
+            }
+        });
+    }, 2000);
+
+    // After 6 seconds, hide blue counties
+    setTimeout(() => {
+        counties.forEach(county => {
+            const colorClass = Array.from(county.classList)
+                .find(cls => cls.startsWith('color-'));
+            if (colorClass) {
+                const colorNum = parseInt(colorClass.replace('color-', ''));
+                if (colorNum >= 7 && colorNum <= 11) {
+                    county.classList.add('hidden');
+                }
+            }
+        });
+    }, 6000);
+
+    // After 7 seconds, show red counties
+    setTimeout(() => {
+        counties.forEach(county => {
+            const colorClass = Array.from(county.classList)
+                .find(cls => cls.startsWith('color-'));
+            if (colorClass) {
+                const colorNum = parseInt(colorClass.replace('color-', ''));
+                if (colorNum >= 1 && colorNum <= 5) {
+                    county.classList.remove('hidden');
+                }
+            }
+        });
+        
+        // Reset animation flag after all animations are complete
+        setTimeout(() => {
+            animationInProgress = false;
+        }, 1000);
+    }, 7000);
+}
+
 const mapFadeObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            entry.target.classList.add('fade-in-map');
-            mapFadeObserver.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
-
-// Stage 2: County color filtering
-const countyFilterObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.intersectionRatio > 0.5) {
+            startMapAnimation();
+        } else {
+            // When scrolling away, reset the animation state
+            animationInProgress = false;
             const counties = document.querySelectorAll('.county');
             counties.forEach(county => {
-                // Keep only counties with color classes 7-11
-                const hasTargetColor = Array.from(county.classList).some(className => {
-                    const colorNum = parseInt(className.replace('color-', ''));
-                    return colorNum >= 7 && colorNum <= 11;
-                });
-                
-                if (!hasTargetColor) {
-                    county.classList.add('fade');
-                }
+                county.classList.remove('hidden');
             });
-            countyFilterObserver.unobserve(entry.target);
         }
     });
 }, observerOptions);
 
-// Stage 3: Text appearance
-const textObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.intersectionRatio > 0.8) {
-            const textOverlay = document.querySelector('.map-text-overlay');
-            if (textOverlay) {
-                textOverlay.classList.add('show');
-            }
-            textObserver.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
-
-// Set up observers when the document is loaded
+// Set up observer when the document is loaded
 document.addEventListener('DOMContentLoaded', () => {
     const mapSection = document.querySelector('#learn-section');
     if (mapSection) {
         mapSection.classList.add('map-animate');
         mapFadeObserver.observe(mapSection);
-        countyFilterObserver.observe(mapSection);
-        textObserver.observe(mapSection);
     }
 });

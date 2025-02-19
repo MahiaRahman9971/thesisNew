@@ -32,8 +32,8 @@ class MapVis {
 
         // Calculate translation to center the map
         let translate = [
-            (vis.width - vis.viewpoint.width * vis.zoom) / 2,
-            (vis.height - vis.viewpoint.height * vis.zoom) / 2
+            vis.margin.left,
+            (vis.height - vis.viewpoint.height * vis.zoom) / 2 + vis.margin.top
         ];
 
         // Adjusting map position
