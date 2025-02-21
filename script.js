@@ -194,8 +194,8 @@ class ExploreNewAreasFlow {
                                 <div class="housing-options">
                                     <a href="https://www.redfin.com/zipcode/${this.data.zipCode}" target="_blank">Redfin</a>
                                     <a href="https://www.zillow.com/homes/${this.data.zipCode}" target="_blank">Zillow</a>
-                                    <a href="https://www.housing8.com/search/${this.data.zipCode}" target="_blank">Housing8</a>
-                                    <a href="https://craigslist.org/search/hhh?postal=${this.data.zipCode}" target="_blank">Craigslist</a>
+                                    <a href="https://www.hud.gov/topics/housing_choice_voucher_program_section_8" target="_blank">Affordable Housing</a>
+                                    <a href="https://craigslist.org" target="_blank">Craigslist</a>
                                 </div>
                             </div>
                             <div class="button-group">
