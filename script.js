@@ -57,17 +57,14 @@ class ExploreNewAreasFlow {
 
     mapEthnicityCode(code) {
         const ethnicityMap = {
-            'asian': 'Asian',
-            'black': 'Black',
-            'hispanic': 'Hispanic',
-            'native': 'Native American',
-            'pacific': 'Pacific Islander',
-            'white': 'White',
-            'mixed': 'Mixed Race',
-            'other': 'Other',
-            'prefer-not': 'Prefer not to say'
+            'W': 'White',
+            'B': 'Black',
+            'H': 'Hispanic',
+            'A': 'Asian',
+            'NA': 'Native American'
         };
-        return ethnicityMap[code] || '';
+        console.log('Mapping ethnicity code:', code, 'to:', ethnicityMap[code]);
+        return ethnicityMap[code] || code || '--';
     }
 
     async startFlow() {
@@ -91,42 +88,42 @@ class ExploreNewAreasFlow {
     }
 
     async showCurrentStep() {
-        // Clear previous content
-        this.flowContainer.innerHTML = await this.getStepContent();
-        
-        // Set up navigation
-        const backBtn = this.flowContainer.querySelector('.back-btn');
-        const nextBtn = this.flowContainer.querySelector('.next-btn');
-        const form = this.flowContainer.querySelector('form');
-        
-        if (backBtn) {
-            backBtn.addEventListener('click', () => this.navigateStep(-1));
+        console.log('Showing step:', this.currentStep);
+        if (!this.flowContainer) {
+            this.flowContainer = document.createElement('div');
+            this.flowContainer.className = 'flow-container';
+            document.querySelector('#move-option .card-content').appendChild(this.flowContainer);
         }
-        
+
+        // Show current step content
+        this.flowContainer.innerHTML = await this.getStepContent();
+
+        // Add event listeners
+        const form = this.flowContainer.querySelector('form');
         if (form) {
-            form.addEventListener('submit', async (e) => {
+            form.addEventListener('submit', (e) => {
                 e.preventDefault();
-                await this.handleStepSubmit(e);
+                this.handleStepSubmit(e);
             });
         }
 
-        // For programs step, enable next button when at least one program is selected
-        if (this.steps[this.currentStep] === 'programs') {
-            const checkboxes = this.flowContainer.querySelectorAll('input[type="checkbox"]');
-            const nextButton = this.flowContainer.querySelector('.next-btn');
-            
-            const updateNextButton = () => {
-                const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
-                nextButton.disabled = !anyChecked;
-            };
-            
-            checkboxes.forEach(cb => {
-                cb.addEventListener('change', updateNextButton);
-            });
-            
-            // Initial check
-            updateNextButton();
+        // Add back button listener
+        const backBtn = this.flowContainer.querySelector('.back-btn');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => this.navigateStep(-1));
         }
+
+        // Add finish button listener
+        const finishBtn = this.flowContainer.querySelector('.finish-btn');
+        if (finishBtn) {
+            finishBtn.addEventListener('click', () => {
+                console.log('Finish button clicked');
+                this.showActionPlanSummary();
+            });
+        }
+
+        // Update the progress indicator
+        this.updateNextButton();
     }
 
     async getStepContent() {
@@ -302,6 +299,8 @@ class ExploreNewAreasFlow {
         this.currentStep++;
         if (this.currentStep < this.steps.length) {
             await this.showCurrentStep();
+        } else {
+            this.showActionPlanSummary();
         }
     }
 
@@ -388,6 +387,122 @@ class ExploreNewAreasFlow {
                 </div>
             </div>
         `;
+    }
+
+    showActionPlanSummary() {
+        // Hide the flow container
+        if (this.flowContainer) {
+            this.flowContainer.style.display = 'none';
+        }
+
+        // Get personalization data
+        const quizData = JSON.parse(localStorage.getItem('personalizationQuiz') || '{}');
+
+        // Show and populate the summary section
+        const summarySection = document.getElementById('action-plan-summary');
+        if (summarySection) {
+            // Update child information section
+            const childName = quizData['child1-name'] || '--';
+            document.getElementById('child-name-header').textContent = `${childName}'s Information`;
+            document.getElementById('summary-child-name').textContent = childName;
+            document.getElementById('summary-child-age').textContent = quizData['child1-age'] || '--';
+            document.getElementById('summary-child-gender').textContent = quizData['child1-gender'] || '--';
+            document.getElementById('summary-child-ethnicity').textContent = this.mapEthnicityCode(quizData['child1-ethnicity']) || '--';
+            document.getElementById('summary-country').textContent = quizData['country'] || '--';
+
+            // Update choices section
+            document.getElementById('summary-zipcode').textContent = this.data.zipCode || '--';
+            document.getElementById('summary-neighborhood').textContent = this.data.selectedNeighborhood || '--';
+            document.getElementById('summary-school').textContent = this.data.selectedSchool || '--';
+            document.getElementById('summary-programs').textContent = 
+                this.data.selectedPrograms.length > 0 ? 
+                this.data.selectedPrograms.join(', ') : '--';
+
+            // Show the section
+            summarySection.style.display = 'block';
+
+            // Add event listeners for buttons
+            const editButton = document.getElementById('edit-choices');
+            if (editButton) {
+                editButton.addEventListener('click', () => {
+                    summarySection.style.display = 'none';
+                    if (this.flowContainer) {
+                        this.flowContainer.style.display = 'block';
+                    }
+                    this.currentStep = 0;
+                    this.showCurrentStep();
+                });
+            }
+
+            const downloadButton = document.getElementById('download-summary');
+            if (downloadButton) {
+                downloadButton.addEventListener('click', () => this.downloadSummaryAsPDF());
+            }
+        }
+    }
+
+    async downloadSummaryAsPDF() {
+        // Get personalization data
+        const quizData = JSON.parse(localStorage.getItem('personalizationQuiz') || '{}');
+        const childName = quizData['child1-name'] || '--';
+        
+        // Create HTML content for PDF
+        const content = `
+            <div style="font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px;">
+                <h1 style="color: #2c3e50; text-align: center;">Action Plan Summary</h1>
+                <p style="color: #666; text-align: center;">Generated on ${new Date().toLocaleDateString()}</p>
+
+                <div style="margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                    <h2 style="color: #2c3e50;">${childName}'s Information</h2>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                        <div><strong>Name:</strong> ${childName}</div>
+                        <div><strong>Age:</strong> ${quizData['child1-age'] || '--'}</div>
+                        <div><strong>Gender:</strong> ${quizData['child1-gender'] || '--'}</div>
+                        <div><strong>Ethnicity:</strong> ${this.mapEthnicityCode(quizData['child1-ethnicity']) || '--'}</div>
+                        <div><strong>Country of Origin:</strong> ${quizData['country'] || '--'}</div>
+                    </div>
+                </div>
+
+                <div style="margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                    <h2 style="color: #2c3e50;">Your Choices</h2>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                        <div><strong>ZIP Code:</strong> ${this.data.zipCode || '--'}</div>
+                        <div><strong>Neighborhood:</strong> ${this.data.selectedNeighborhood || '--'}</div>
+                        <div><strong>Selected School:</strong> ${this.data.selectedSchool || '--'}</div>
+                        <div><strong>Community Programs:</strong> ${this.data.selectedPrograms.length > 0 ? this.data.selectedPrograms.join(', ') : '--'}</div>
+                    </div>
+                </div>
+
+                <div style="margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                    <h2 style="color: #2c3e50;">Recommended Next Steps</h2>
+                    <ul style="list-style-type: none; padding: 0;">
+                        <li style="margin: 10px 0;">□ Schedule a visit to the selected school</li>
+                        <li style="margin: 10px 0;">□ Research housing options in the chosen neighborhood</li>
+                        <li style="margin: 10px 0;">□ Contact community programs for enrollment information</li>
+                        <li style="margin: 10px 0;">□ Plan moving logistics and timeline</li>
+                        <li style="margin: 10px 0;">□ Gather required documents for school enrollment</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+
+        try {
+            // Create a new window for the PDF content
+            const printWindow = window.open('', '', 'width=800,height=600');
+            printWindow.document.write('<html><head><title>Action Plan Summary</title></head><body>');
+            printWindow.document.write(content);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+
+            // Wait for content to load then print
+            printWindow.setTimeout(() => {
+                printWindow.print();
+                printWindow.close();
+            }, 250);
+        } catch (error) {
+            console.error('Error generating PDF:', error);
+            alert('There was an error generating the PDF. Please try again.');
+        }
     }
 }
 
