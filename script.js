@@ -628,8 +628,19 @@ document.addEventListener('DOMContentLoaded', () => {
             // Save to localStorage
             localStorage.setItem('personalizationQuiz', JSON.stringify(quizData));
             
-            // Show success message
-            alert('Your information has been saved. We will personalize your experience based on your responses.');
+            // Show success checkmark
+            const checkmark = document.getElementById('submit-success');
+            if (checkmark) {
+                // Remove and re-add the class to restart animation
+                checkmark.classList.remove('show');
+                void checkmark.offsetWidth; // Force reflow
+                checkmark.classList.add('show');
+
+                // Hide the checkmark after 3 seconds
+                setTimeout(() => {
+                    checkmark.classList.remove('show');
+                }, 3000);
+            }
             
             // Refresh ExploreNewAreasFlow if it exists
             const exploreFlow = new ExploreNewAreasFlow();
