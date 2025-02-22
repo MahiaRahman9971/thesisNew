@@ -687,12 +687,14 @@ class StayAndImproveFlow {
 
     async fetchCommunityPrograms() {
         try {
-            const response = await fetch('http://localhost:3000/api/community-programs', {
+            const response = await fetch('http://localhost:3000/api/programs', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ zipCode: this.zipCode })
+                body: JSON.stringify({ 
+                    zipCode: this.zipCode 
+                })
             });
 
             if (!response.ok) {
@@ -700,13 +702,15 @@ class StayAndImproveFlow {
             }
 
             const data = await response.json();
-            this.programsData = data.programs;
+            // Ensure programsData is always an array
+            this.programsData = Array.isArray(data.programs) ? data.programs : [];
             
             // Render all programs initially
             this.renderPrograms();
         } catch (error) {
             console.error('Error fetching community programs:', error);
-            throw error;
+            this.programsData = [];
+            this.renderPrograms();
         }
     }
 
@@ -752,13 +756,14 @@ class StayAndImproveFlow {
         
         programsList.innerHTML = '';
         
+        // Ensure programsData is always an array
         if (!Array.isArray(this.programsData)) {
             console.error('Programs data is not an array:', this.programsData);
-            return;
+            this.programsData = [];
         }
 
         if (this.programsData.length === 0) {
-            programsList.innerHTML = '<p class="no-results">No programs found.</p>';
+            programsList.innerHTML = '<p class="no-results">No programs found in your area.</p>';
             return;
         }
 

@@ -20,36 +20,26 @@ app.use(express.static(path.join(__dirname)));
 // Helper function to get data from OpenAI
 async function getOpenAIResponse(prompt) {
     try {
-        const completion = await openai.chat.completions.create({
-            model: "gpt-4",
-            messages: [
-                {
-                    role: "system",
-                    content: "You are a JSON API that returns structured data about townships, schools, and community programs. Always respond with valid JSON data only, no conversation or explanations."
-                },
-                { 
-                    role: "user",
-                    content: prompt 
-                }
-            ],
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o',
+            messages: [{ role: 'user', content: prompt }],
             temperature: 0.7,
-            max_tokens: 1000
         });
-        const content = completion.choices[0].message.content;
-        // Ensure we have valid JSON
+
+        const content = response.choices[0].message.content;
+        
+        // Remove markdown code block syntax if present
+        const jsonStr = content.replace(/```json\n|\n```/g, '');
+        
         try {
-            return JSON.parse(content);
-        } catch (error) {
-            console.error('Invalid JSON from OpenAI:', content);
-            // Return a default structure if the response is invalid
-            return {
-                error: "Invalid response format",
-                message: "Please try again"
-            };
+            return JSON.parse(jsonStr);
+        } catch (parseError) {
+            console.error('Failed to parse OpenAI response:', jsonStr);
+            return { error: 'Invalid response format', message: 'Please try again' };
         }
     } catch (error) {
         console.error('OpenAI API Error:', error);
-        throw error;
+        return { error: 'API error', message: error.message };
     }
 }
 
@@ -122,16 +112,48 @@ Return at least 3 schools. The rating should be a number between 1 and 5.`;
 app.post('/api/programs', async (req, res) => {
     const { zipCode } = req.body;
     try {
-        const prompt = `Given ZIP code ${zipCode}, provide a JSON array of 6 community programs available in or near this area.
-            Include various types: educational, sports, arts, academic support, etc.
-            For each program include: name, type, ageRange (array with min and max age), description (2 sentences), and schedule (brief text).
-            Format the response as valid JSON. Only return the JSON array, no other text.`;
+        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with real data:
+{
+    "programs": [
+        {
+            "id": 1,
+            "name": "Program Name",
+            "category": "education/support/enrichment/etc",
+            "description": "Brief description of the program",
+            "contact": "Contact information"
+        }
+    ]
+}
+Return at least 3 programs with realistic data.`;
         
         const response = await getOpenAIResponse(prompt);
-        const programs = response;
-        res.json(programs);
+        
+        // Ensure we have the correct data structure
+        if (!response || !response.programs || !Array.isArray(response.programs)) {
+            console.error('Invalid programs data structure:', response);
+            res.status(500).json({ 
+                error: 'Invalid data structure received',
+                programs: [] 
+            });
+            return;
+        }
+
+        // Validate each program object
+        const validatedPrograms = response.programs.map(program => ({
+            id: program.id || Math.floor(Math.random() * 1000),
+            name: program.name || 'Unnamed Program',
+            category: program.category || 'general',
+            description: program.description || 'No description available',
+            contact: program.contact || 'Contact information not available'
+        }));
+        
+        res.json({ programs: validatedPrograms });
     } catch (error) {
-        res.status(500).json({ error: 'Error fetching program data' });
+        console.error('Programs API Error:', error);
+        res.status(500).json({ 
+            error: 'Error fetching program data',
+            programs: [] 
+        });
     }
 });
 
@@ -195,6 +217,10 @@ app.post('/api/community-programs', async (req, res) => {
         console.error('Programs API Error:', error);
         res.status(500).json({ error: 'Error fetching program data' });
     }
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(port, () => {
