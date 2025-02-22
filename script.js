@@ -123,8 +123,6 @@ class ExploreNewAreasFlow {
             });
         }
 
-        // Update the progress indicator
-        this.updateNextButton();
     }
 
     async getStepContent() {
