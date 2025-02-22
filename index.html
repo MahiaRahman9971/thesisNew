@@ -317,60 +317,6 @@
                                     </ul>
                                     <button class="action-btn stay-btn" id="stay-action-btn">Choose This Option</button>
                                 </div>
-
-                                <div class="detailed-view hidden" id="stay-detailed">
-                                    <div class="township-info">
-                                        <h5>Your Township</h5>
-                                        <div class="township-details">
-                                            <p id="township-name">Loading...</p>
-                                            <a href="#" id="township-website" target="_blank">Visit Township Website</a>
-                                        </div>
-                                    </div>
-
-                                    <div class="schools-section">
-                                        <h5>Nearby Schools</h5>
-                                        <div class="school-filters">
-                                            <button class="filter-btn active" data-filter="all">All Schools</button>
-                                            <button class="filter-btn" data-filter="elementary">Elementary</button>
-                                            <button class="filter-btn" data-filter="middle">Middle</button>
-                                            <button class="filter-btn" data-filter="high">High School</button>
-                                        </div>
-                                        <div class="schools-list" id="schools-list">
-                                            <!-- Schools will be populated dynamically -->
-                                        </div>
-                                    </div>
-
-                                    <div class="programs-section">
-                                        <h5>Community Programs</h5>
-                                        <div class="program-categories">
-                                            <div class="program-category">
-                                                <h6>Youth Development</h6>
-                                                <div class="programs-grid" id="youth-programs"></div>
-                                            </div>
-                                            <div class="program-category">
-                                                <h6>Education & Learning</h6>
-                                                <div class="programs-grid" id="education-programs"></div>
-                                            </div>
-                                            <div class="program-category">
-                                                <h6>Community Support</h6>
-                                                <div class="programs-grid" id="community-programs"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="selected-items">
-                                        <h5>Your Selections</h5>
-                                        <div class="selected-school">
-                                            <h6>Chosen School:</h6>
-                                            <p id="selected-school-name">None selected</p>
-                                        </div>
-                                        <div class="selected-programs">
-                                            <h6>Selected Programs:</h6>
-                                            <ul id="selected-programs-list"></ul>
-                                        </div>
-                                        <button class="action-btn confirm-btn" id="confirm-selections">Confirm Selections</button>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -379,13 +325,62 @@
                             <div class="card-content">
                                 <p>Find communities with better opportunities:</p>
                                 <ul>
-                                    <li>View high-opportunity areas</li>
-                                    <li>Compare school districts</li>
-                                    <li>Analyze community programs</li>
-                                    <li>Research housing options</li>
+                                    <li>Compare different neighborhoods</li>
+                                    <li>Find better schools</li>
+                                    <li>Discover available resources</li>
+                                    <li>Plan your move</li>
                                 </ul>
-                                <button class="action-btn move-btn">Choose This Option</button>
+                                <button class="action-btn move-btn" id="move-action-btn">Choose This Option</button>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="stay-improve-details" class="stay-improve-details hidden">
+                    <div class="loading-indicator hidden">
+                        <div class="spinner"></div>
+                        <p>Analyzing your community...</p>
+                    </div>
+
+                    <div class="details-grid">
+                        <div class="township-info">
+                            <h5>Your Township</h5>
+                            <div class="township-details">
+                                <p id="township-name">Loading...</p>
+                                <div id="township-description"></div>
+                                <a href="#" id="township-website" target="_blank" class="township-link">Visit Township Website</a>
+                            </div>
+                        </div>
+
+                        <div class="schools-section">
+                            <h5>Nearby Schools</h5>
+                            <div class="school-filters">
+                                <button class="filter-btn active" data-filter="all">All Schools</button>
+                                <button class="filter-btn" data-filter="elementary">Elementary</button>
+                                <button class="filter-btn" data-filter="middle">Middle</button>
+                                <button class="filter-btn" data-filter="high">High School</button>
+                            </div>
+                            <div class="schools-list" id="schools-list">
+                                <!-- Schools will be dynamically added here -->
+                            </div>
+                        </div>
+
+                        <div class="programs-section">
+                            <h5>Community Programs</h5>
+                            <div class="program-filters">
+                                <button class="filter-btn active" data-filter="all">All Programs</button>
+                                <button class="filter-btn" data-filter="education">Education</button>
+                                <button class="filter-btn" data-filter="enrichment">Enrichment</button>
+                                <button class="filter-btn" data-filter="support">Support Services</button>
+                            </div>
+                            <div class="programs-list" id="programs-list">
+                                <!-- Programs will be dynamically added here -->
+                            </div>
+                            <div class="selected-programs">
+                                <h6>Selected Programs</h6>
+                                <div id="selected-programs-list"></div>
+                            </div>
+                            <button class="save-programs-btn" id="save-programs-btn">Save Selected Programs</button>
                         </div>
                     </div>
                 </div>

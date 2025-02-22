@@ -536,6 +536,298 @@ class ExploreNewAreasFlow {
     }
 }
 
+class StayAndImproveFlow {
+    constructor() {
+        this.zipCode = '';
+        this.selectedPrograms = new Set();
+        this.schoolsData = [];
+        this.programsData = [];
+        
+        // Bind event handlers
+        this.handleStayOptionClick = this.handleStayOptionClick.bind(this);
+        this.handleSchoolFilter = this.handleSchoolFilter.bind(this);
+        this.handleProgramFilter = this.handleProgramFilter.bind(this);
+        this.handleProgramSelection = this.handleProgramSelection.bind(this);
+        this.handleSavePrograms = this.handleSavePrograms.bind(this);
+        
+        // Initialize event listeners
+        this.initializeEventListeners();
+    }
+
+    initializeEventListeners() {
+        document.getElementById('stay-action-btn').addEventListener('click', this.handleStayOptionClick);
+        
+        // School filters
+        const schoolFilters = document.querySelectorAll('.school-filters .filter-btn');
+        schoolFilters.forEach(btn => {
+            btn.addEventListener('click', () => this.handleSchoolFilter(btn.dataset.filter));
+        });
+        
+        // Program filters
+        const programFilters = document.querySelectorAll('.program-filters .filter-btn');
+        programFilters.forEach(btn => {
+            btn.addEventListener('click', () => this.handleProgramFilter(btn.dataset.filter));
+        });
+        
+        // Save programs button
+        document.getElementById('save-programs-btn').addEventListener('click', this.handleSavePrograms);
+    }
+
+    async handleStayOptionClick() {
+        const detailsSection = document.getElementById('stay-improve-details');
+        const loadingIndicator = detailsSection.querySelector('.loading-indicator');
+        
+        // Show loading state
+        detailsSection.classList.remove('hidden');
+        loadingIndicator.classList.remove('hidden');
+        
+        // Scroll to the details section
+        detailsSection.scrollIntoView({ behavior: 'smooth' });
+        
+        try {
+            // Get zip code from local storage
+            const quizData = JSON.parse(localStorage.getItem('personalizationQuiz') || '{}');
+            this.zipCode = quizData.zipCode || '';
+            
+            if (!this.zipCode) {
+                throw new Error('Zip code not found');
+            }
+            
+            // Fetch data in parallel
+            await Promise.all([
+                this.fetchTownshipInfo(),
+                this.fetchSchools(),
+                this.fetchCommunityPrograms()
+            ]);
+            
+        } catch (error) {
+            console.error('Error in stay option flow:', error);
+            // Show error message to user
+        } finally {
+            loadingIndicator.classList.add('hidden');
+        }
+    }
+
+    async fetchTownshipInfo() {
+        const prompt = `For zip code ${this.zipCode}, please provide:
+            1. The township or municipality name
+            2. A brief description of the area
+            3. The official township website URL`;
+            
+        try {
+            // Call OpenAI API (implementation needed)
+            const response = await this.callOpenAI(prompt);
+            
+            // Update UI
+            document.getElementById('township-name').textContent = response.townshipName;
+            document.getElementById('township-description').textContent = response.description;
+            document.getElementById('township-website').href = response.websiteUrl;
+        } catch (error) {
+            console.error('Error fetching township info:', error);
+        }
+    }
+
+    async fetchSchools() {
+        const prompt = `For zip code ${this.zipCode}, list nearby public schools with:
+            1. School name
+            2. Grade levels
+            3. Quality rating (1-5 stars) based on Stanford Education Data
+            4. Brief description of strengths/weaknesses`;
+            
+        try {
+            // Call OpenAI API (implementation needed)
+            const response = await this.callOpenAI(prompt);
+            this.schoolsData = response.schools;
+            
+            // Render schools
+            this.renderSchools('all');
+        } catch (error) {
+            console.error('Error fetching schools:', error);
+        }
+    }
+
+    async fetchCommunityPrograms() {
+        const prompt = `For zip code ${this.zipCode}, suggest community programs in these categories:
+            1. Education (tutoring, mentoring, etc.)
+            2. Enrichment (arts, sports, etc.)
+            3. Support Services (counseling, resources, etc.)
+            Include program names, descriptions, and contact information.`;
+            
+        try {
+            // Call OpenAI API (implementation needed)
+            const response = await this.callOpenAI(prompt);
+            this.programsData = response.programs;
+            
+            // Render programs
+            this.renderPrograms('all');
+        } catch (error) {
+            console.error('Error fetching programs:', error);
+        }
+    }
+
+    renderSchools(filter) {
+        const schoolsList = document.getElementById('schools-list');
+        schoolsList.innerHTML = '';
+        
+        const filteredSchools = filter === 'all' 
+            ? this.schoolsData 
+            : this.schoolsData.filter(school => school.type === filter);
+            
+        filteredSchools.forEach(school => {
+            const schoolElement = document.createElement('div');
+            schoolElement.className = 'school-item';
+            schoolElement.innerHTML = `
+                <h6>${school.name}</h6>
+                <div class="school-rating">
+                    ${this.generateStars(school.rating)}
+                </div>
+                <p class="school-type">${school.gradeLevel}</p>
+                <p class="school-description">${school.description}</p>
+            `;
+            schoolsList.appendChild(schoolElement);
+        });
+    }
+
+    renderPrograms(filter) {
+        const programsList = document.getElementById('programs-list');
+        programsList.innerHTML = '';
+        
+        const filteredPrograms = filter === 'all'
+            ? this.programsData
+            : this.programsData.filter(program => program.category === filter);
+            
+        filteredPrograms.forEach(program => {
+            const programElement = document.createElement('div');
+            programElement.className = 'program-item';
+            programElement.innerHTML = `
+                <div class="program-header">
+                    <h6>${program.name}</h6>
+                    <button class="select-program-btn" data-id="${program.id}">
+                        ${this.selectedPrograms.has(program.id) ? '✓ Selected' : 'Select'}
+                    </button>
+                </div>
+                <p class="program-category">${program.category}</p>
+                <p class="program-description">${program.description}</p>
+                <p class="program-contact">${program.contact}</p>
+            `;
+            
+            const selectBtn = programElement.querySelector('.select-program-btn');
+            selectBtn.addEventListener('click', () => this.handleProgramSelection(program));
+            
+            programsList.appendChild(programElement);
+        });
+        
+        this.updateSelectedProgramsList();
+    }
+
+    handleSchoolFilter(filter) {
+        // Update active state of filter buttons
+        const buttons = document.querySelectorAll('.school-filters .filter-btn');
+        buttons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+        
+        this.renderSchools(filter);
+    }
+
+    handleProgramFilter(filter) {
+        // Update active state of filter buttons
+        const buttons = document.querySelectorAll('.program-filters .filter-btn');
+        buttons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+        
+        this.renderPrograms(filter);
+    }
+
+    handleProgramSelection(program) {
+        if (this.selectedPrograms.has(program.id)) {
+            this.selectedPrograms.delete(program.id);
+        } else {
+            this.selectedPrograms.add(program.id);
+        }
+        
+        this.renderPrograms(document.querySelector('.program-filters .filter-btn.active').dataset.filter);
+    }
+
+    updateSelectedProgramsList() {
+        const selectedList = document.getElementById('selected-programs-list');
+        selectedList.innerHTML = '';
+        
+        const selectedProgramsData = this.programsData.filter(p => this.selectedPrograms.has(p.id));
+        
+        if (selectedProgramsData.length === 0) {
+            selectedList.innerHTML = '<p class="no-selections">No programs selected</p>';
+            return;
+        }
+        
+        selectedProgramsData.forEach(program => {
+            const item = document.createElement('div');
+            item.className = 'selected-program-item';
+            item.innerHTML = `
+                <span>${program.name}</span>
+                <button class="remove-program-btn" data-id="${program.id}">×</button>
+            `;
+            
+            item.querySelector('.remove-program-btn').addEventListener('click', () => {
+                this.selectedPrograms.delete(program.id);
+                this.renderPrograms(document.querySelector('.program-filters .filter-btn.active').dataset.filter);
+            });
+            
+            selectedList.appendChild(item);
+        });
+    }
+
+    handleSavePrograms() {
+        const selectedProgramsData = this.programsData.filter(p => this.selectedPrograms.has(p.id));
+        localStorage.setItem('selectedPrograms', JSON.stringify(selectedProgramsData));
+        
+        // Show success message or update UI as needed
+        alert('Your selected programs have been saved!');
+    }
+
+    generateStars(rating) {
+        const fullStar = '★';
+        const emptyStar = '☆';
+        return Array(5).fill('').map((_, i) => i < rating ? fullStar : emptyStar).join('');
+    }
+
+    async callOpenAI(prompt) {
+        // Implementation needed - this should make the actual API call to OpenAI
+        // Return mock data for now
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve({
+                    townshipName: 'Sample Township',
+                    description: 'A vibrant community with excellent schools and parks.',
+                    websiteUrl: 'https://www.sampletown.gov',
+                    schools: [
+                        {
+                            id: 1,
+                            name: 'Washington Elementary',
+                            type: 'elementary',
+                            gradeLevel: 'K-5',
+                            rating: 4,
+                            description: 'Strong STEM program with experienced teachers.'
+                        },
+                        // Add more mock schools...
+                    ],
+                    programs: [
+                        {
+                            id: 1,
+                            name: 'After-School Tutoring',
+                            category: 'education',
+                            description: 'Free tutoring services for K-12 students.',
+                            contact: 'education@sampletown.org'
+                        },
+                        // Add more mock programs...
+                    ]
+                });
+            }, 1000);
+        });
+    }
+}
+
 // Initialize everything when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize progress bar and animations
@@ -608,6 +900,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize ExploreNewAreasFlow
     const exploreFlow = new ExploreNewAreasFlow();
     exploreFlow.init();
+
+    // Initialize StayAndImproveFlow
+    const stayAndImproveFlow = new StayAndImproveFlow();
 
     // Initialize factor card interactions
     document.querySelectorAll('.factor-card').forEach(card => {
