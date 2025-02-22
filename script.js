@@ -122,7 +122,6 @@ class ExploreNewAreasFlow {
                 this.showActionPlanSummary();
             });
         }
-
     }
 
     async getStepContent() {
@@ -256,7 +255,7 @@ class ExploreNewAreasFlow {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ zipCode: this.data.zipCode })
                 }).then(res => res.json()),
-                fetch('http://localhost:3000/api/schools', {
+                fetch('http://localhost:3000/api/schools-move', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
@@ -657,7 +656,7 @@ class StayAndImproveFlow {
 
     async fetchSchools() {
         try {
-            const response = await fetch('http://localhost:3000/api/schools', {
+            const response = await fetch('http://localhost:3000/api/schools-stay', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

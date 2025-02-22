@@ -59,8 +59,8 @@ app.post('/api/neighborhoods', async (req, res) => {
     }
 });
 
-// Endpoint to get school data
-app.post('/api/schools', async (req, res) => {
+// Endpoint to get school data for staying
+app.post('/api/schools-stay', async (req, res) => {
     const { zipCode, childAge } = req.body;
     try {
         // Determine school type based on age
@@ -76,19 +76,19 @@ app.post('/api/schools', async (req, res) => {
         }
 
         const prompt = `For zip code ${zipCode}, provide ONLY this exact JSON structure with real data for ${schoolLevel} schools:
-{
-    "schools": [
         {
-            "id": 1,
-            "name": "School Name",
-            "type": "${schoolLevel}",
-            "gradeLevel": "specific grades (e.g., K-5 for elementary)",
-            "rating": 4,
-            "description": "Brief description of strengths/weaknesses"
+            "schools": [
+                {
+                    "id": 1,
+                    "name": "School Name",
+                    "type": "${schoolLevel}",
+                    "gradeLevel": "specific grades (e.g., K-5 for elementary)",
+                    "rating": 4,
+                    "description": "Brief description of strengths/weaknesses"
+                }
+            ]
         }
-    ]
-}
-Return at least 3 schools. The rating should be a number between 1 and 5.`;
+        Return at least 3 schools. The rating should be a number between 1 and 5.`;
         
         const response = await getOpenAIResponse(prompt);
         
@@ -105,6 +105,64 @@ Return at least 3 schools. The rating should be a number between 1 and 5.`;
             error: 'Error fetching school data',
             schools: [] 
         });
+    }
+});
+
+// Endpoint to get school data for moving
+app.post('/api/schools-move', async (req, res) => {
+    const { zipCode, childAge } = req.body;
+    try {
+        // Determine school type based on age
+        let schoolLevel;
+        if (childAge < 5) {
+            schoolLevel = 'preschool';
+        } else if (childAge >= 5 && childAge <= 10) {
+            schoolLevel = 'elementary';
+        } else if (childAge >= 11 && childAge <= 13) {
+            schoolLevel = 'middle';
+        } else {
+            schoolLevel = 'high';
+        }
+
+        const prompt = `
+        Given ZIP code ${zipCode} and a child age of ${childAge} (${schoolLevel} school level), provide a JSON array of 5 relevant ${schoolLevel} schools in or very close to this ZIP code.
+
+        Follow these strict school type rules:
+        - Preschool: Ages 3-4
+        - Elementary School: Ages 5-10
+        - Middle School: Ages 11-13
+        - High School: Ages 14-18
+
+        The child is ${childAge} years old, so ONLY return ${schoolLevel} schools.
+
+        For each school, use the following JSON structure:
+        {
+        "name": "School Name",
+        "type": "${schoolLevel}",
+        "gradeRange": "specific grades (e.g., K-5 for elementary)",
+        "rating": 1-10,
+        "description": "2-3 sentences about the school's features",
+        "distance": "distance in miles from ZIP code"
+        }
+
+        Distance Rules:
+        - If the school is in the exact same ZIP code, the distance must be less than 1 mile.
+        - If the school is nearby (e.g., a neighboring ZIP code or within a few miles), provide a realistic mileage (e.g., 1 to 5 miles).
+        - Do not show large distances for schools allegedly in the same ZIP code.
+
+        Return ONLY a valid JSON array with no extra text or explanation.
+        `;
+        
+        const response = await getOpenAIResponse(prompt);
+        if (typeof response === "string") {
+            schools = JSON.parse(response);
+        } else {
+            schools = response; // It's already an object, no need to parse
+        }
+        res.json(schools);
+    } catch (error) {
+        console.error('School API Error:', error);
+        res.status(500).json({ error: 'Error fetching school data' });
     }
 });
 
