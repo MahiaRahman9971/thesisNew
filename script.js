@@ -655,14 +655,19 @@ class StayAndImproveFlow {
             }
         }
         
-        if (townshipWebsite && data.websiteUrl) {
-            townshipWebsite.href = data.websiteUrl;
-            townshipWebsite.textContent = 'Visit Township Website';
-            townshipWebsite.target = '_blank'; // Open in new tab
-            townshipWebsite.rel = 'noopener noreferrer'; // Security best practice
-        } else if (townshipWebsite) {
-            townshipWebsite.href = '#';
-            townshipWebsite.textContent = 'Website not available';
+        if (townshipWebsite) {
+            if (data.websiteUrl) {
+                const url = data.websiteUrl.startsWith('http') ? data.websiteUrl : `https://${data.websiteUrl}`;
+                townshipWebsite.innerHTML = `
+                    <a href="${url}" class="township-link" target="_blank" rel="noopener noreferrer">
+                        Visit Township Website
+                    </a>
+                `;
+            } else {
+                townshipWebsite.innerHTML = `
+                    <span class="township-link disabled">Website not available</span>
+                `;
+            }
         }
     }
 
@@ -719,6 +724,51 @@ class StayAndImproveFlow {
         }
     }
 
+    handleSavePrograms() {
+        // Get selected programs data
+        const selectedProgramsData = this.programsData
+            .filter(program => this.selectedPrograms.has(program.id));
+
+        // Save to local storage
+        localStorage.setItem('selectedPrograms', JSON.stringify(selectedProgramsData));
+
+        // Show success message
+        const messageElement = document.getElementById('save-success-message');
+        if (messageElement) {
+            messageElement.textContent = 'Programs saved successfully!';
+            messageElement.style.display = 'block';
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 3000);
+        }
+    }
+
+    handleProgramFilter(event) {
+        // Remove active class from all filter buttons
+        const filterButtons = document.querySelectorAll('.program-filters .filter-btn');
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to clicked button
+        event.target.classList.add('active');
+        
+        // Get filter value and update display
+        const filter = event.target.dataset.filter;
+        this.renderPrograms(filter);
+    }
+
+    handleSchoolFilter(event) {
+        // Remove active class from all filter buttons
+        const filterButtons = document.querySelectorAll('.school-filters .filter-btn');
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to clicked button
+        event.target.classList.add('active');
+        
+        // Get filter value and update display
+        const filter = event.target.dataset.filter;
+        this.renderSchools(filter);
+    }
+
     renderSchools(filter) {
         const schoolsList = document.getElementById('schools-list');
         if (!schoolsList) return;
@@ -761,8 +811,15 @@ class StayAndImproveFlow {
 
     renderPrograms(filter) {
         const programsList = document.getElementById('programs-list');
+        if (!programsList) return;
+        
         programsList.innerHTML = '';
         
+        if (!Array.isArray(this.programsData)) {
+            console.error('Programs data is not an array:', this.programsData);
+            return;
+        }
+
         const filteredPrograms = filter === 'all'
             ? this.programsData
             : this.programsData.filter(program => program.category === filter);
@@ -772,18 +829,21 @@ class StayAndImproveFlow {
             programElement.className = 'program-item';
             programElement.innerHTML = `
                 <div class="program-header">
-                    <h6>${program.name}</h6>
-                    <button class="select-program-btn" data-id="${program.id}">
-                        ${this.selectedPrograms.has(program.id) ? '✓ Selected' : 'Select'}
-                    </button>
+                    <h4 class="program-name">${program.name || 'Program Name Not Available'}</h4>
+                    <span class="program-category">${program.category || 'Category Not Available'}</span>
                 </div>
-                <p class="program-category">${program.category}</p>
-                <p class="program-description">${program.description}</p>
-                <p class="program-contact">${program.contact}</p>
+                <p class="program-description">${program.description || 'No description available.'}</p>
+                <p class="program-contact">${program.contact || 'Contact information not available.'}</p>
+                <button class="select-program-btn ${this.selectedPrograms.has(program.id) ? 'selected' : ''}" data-id="${program.id}">
+                    ${this.selectedPrograms.has(program.id) ? '✓ Selected' : 'Select Program'}
+                </button>
             `;
             
+            // Add event listener to the select button
             const selectBtn = programElement.querySelector('.select-program-btn');
-            selectBtn.addEventListener('click', () => this.handleProgramSelection(program));
+            if (selectBtn) {
+                selectBtn.addEventListener('click', () => this.handleProgramSelection(program.id));
+            }
             
             programsList.appendChild(programElement);
         });
@@ -791,34 +851,13 @@ class StayAndImproveFlow {
         this.updateSelectedProgramsList();
     }
 
-    handleSchoolFilter(filter) {
-        // Update active state of filter buttons
-        const buttons = document.querySelectorAll('.school-filters .filter-btn');
-        buttons.forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.filter === filter);
-        });
-        
-        this.renderSchools(filter);
-    }
-
-    handleProgramFilter(filter) {
-        // Update active state of filter buttons
-        const buttons = document.querySelectorAll('.program-filters .filter-btn');
-        buttons.forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.filter === filter);
-        });
-        
-        this.renderPrograms(filter);
-    }
-
-    handleProgramSelection(program) {
-        if (this.selectedPrograms.has(program.id)) {
-            this.selectedPrograms.delete(program.id);
+    handleProgramSelection(programId) {
+        if (this.selectedPrograms.has(programId)) {
+            this.selectedPrograms.delete(programId);
         } else {
-            this.selectedPrograms.add(program.id);
+            this.selectedPrograms.add(programId);
         }
-        
-        this.renderPrograms(document.querySelector('.program-filters .filter-btn.active').dataset.filter);
+        this.renderPrograms('all'); // Re-render to update button states
     }
 
     updateSelectedProgramsList() {
@@ -847,14 +886,6 @@ class StayAndImproveFlow {
             
             selectedList.appendChild(item);
         });
-    }
-
-    handleSavePrograms() {
-        const selectedProgramsData = this.programsData.filter(p => this.selectedPrograms.has(p.id));
-        localStorage.setItem('selectedPrograms', JSON.stringify(selectedProgramsData));
-        
-        // Show success message or update UI as needed
-        alert('Your selected programs have been saved!');
     }
 
     generateStars(rating) {
