@@ -545,8 +545,6 @@ class StayAndImproveFlow {
         
         // Bind event handlers
         this.handleStayOptionClick = this.handleStayOptionClick.bind(this);
-        this.handleSchoolFilter = this.handleSchoolFilter.bind(this);
-        this.handleProgramFilter = this.handleProgramFilter.bind(this);
         this.handleProgramSelection = this.handleProgramSelection.bind(this);
         this.handleSavePrograms = this.handleSavePrograms.bind(this);
         
@@ -556,18 +554,6 @@ class StayAndImproveFlow {
 
     initializeEventListeners() {
         document.getElementById('stay-action-btn').addEventListener('click', this.handleStayOptionClick);
-        
-        // School filters
-        const schoolFilters = document.querySelectorAll('.school-filters .filter-btn');
-        schoolFilters.forEach(btn => {
-            btn.addEventListener('click', () => this.handleSchoolFilter(btn.dataset.filter));
-        });
-        
-        // Program filters
-        const programFilters = document.querySelectorAll('.program-filters .filter-btn');
-        programFilters.forEach(btn => {
-            btn.addEventListener('click', () => this.handleProgramFilter(btn.dataset.filter));
-        });
         
         // Save programs button
         document.getElementById('save-programs-btn').addEventListener('click', this.handleSavePrograms);
@@ -692,7 +678,7 @@ class StayAndImproveFlow {
             this.schoolsData = data.schools || [];
             
             // Render all schools initially
-            this.renderSchools('all');
+            this.renderSchools();
         } catch (error) {
             console.error('Error fetching schools:', error);
             throw error;
@@ -717,59 +703,14 @@ class StayAndImproveFlow {
             this.programsData = data.programs;
             
             // Render all programs initially
-            this.renderPrograms('all');
+            this.renderPrograms();
         } catch (error) {
             console.error('Error fetching community programs:', error);
             throw error;
         }
     }
 
-    handleSavePrograms() {
-        // Get selected programs data
-        const selectedProgramsData = this.programsData
-            .filter(program => this.selectedPrograms.has(program.id));
-
-        // Save to local storage
-        localStorage.setItem('selectedPrograms', JSON.stringify(selectedProgramsData));
-
-        // Show success message
-        const messageElement = document.getElementById('save-success-message');
-        if (messageElement) {
-            messageElement.textContent = 'Programs saved successfully!';
-            messageElement.style.display = 'block';
-            setTimeout(() => {
-                messageElement.style.display = 'none';
-            }, 3000);
-        }
-    }
-
-    handleProgramFilter(event) {
-        // Remove active class from all filter buttons
-        const filterButtons = document.querySelectorAll('.program-filters .filter-btn');
-        filterButtons.forEach(btn => btn.classList.remove('active'));
-        
-        // Add active class to clicked button
-        event.target.classList.add('active');
-        
-        // Get filter value and update display
-        const filter = event.target.dataset.filter;
-        this.renderPrograms(filter);
-    }
-
-    handleSchoolFilter(event) {
-        // Remove active class from all filter buttons
-        const filterButtons = document.querySelectorAll('.school-filters .filter-btn');
-        filterButtons.forEach(btn => btn.classList.remove('active'));
-        
-        // Add active class to clicked button
-        event.target.classList.add('active');
-        
-        // Get filter value and update display
-        const filter = event.target.dataset.filter;
-        this.renderSchools(filter);
-    }
-
-    renderSchools(filter) {
+    renderSchools() {
         const schoolsList = document.getElementById('schools-list');
         if (!schoolsList) return;
         
@@ -783,16 +724,12 @@ class StayAndImproveFlow {
         // Sort schools by rating (highest to lowest)
         const sortedSchools = [...this.schoolsData].sort((a, b) => (b.rating || 0) - (a.rating || 0));
 
-        const filteredSchools = filter === 'all' ? 
-            sortedSchools : 
-            sortedSchools.filter(school => school.type === filter);
-
-        if (filteredSchools.length === 0) {
-            schoolsList.innerHTML = '<p class="no-results">No schools found for the selected filter.</p>';
+        if (sortedSchools.length === 0) {
+            schoolsList.innerHTML = '<p class="no-results">No schools found.</p>';
             return;
         }
 
-        filteredSchools.forEach(school => {
+        sortedSchools.forEach(school => {
             const schoolElement = document.createElement('div');
             schoolElement.className = 'school-item';
             schoolElement.innerHTML = `
@@ -809,7 +746,7 @@ class StayAndImproveFlow {
         });
     }
 
-    renderPrograms(filter) {
+    renderPrograms() {
         const programsList = document.getElementById('programs-list');
         if (!programsList) return;
         
@@ -820,11 +757,12 @@ class StayAndImproveFlow {
             return;
         }
 
-        const filteredPrograms = filter === 'all'
-            ? this.programsData
-            : this.programsData.filter(program => program.category === filter);
-            
-        filteredPrograms.forEach(program => {
+        if (this.programsData.length === 0) {
+            programsList.innerHTML = '<p class="no-results">No programs found.</p>';
+            return;
+        }
+
+        this.programsData.forEach(program => {
             const programElement = document.createElement('div');
             programElement.className = 'program-item';
             programElement.innerHTML = `
@@ -857,7 +795,7 @@ class StayAndImproveFlow {
         } else {
             this.selectedPrograms.add(programId);
         }
-        this.renderPrograms('all'); // Re-render to update button states
+        this.renderPrograms(); // Re-render to update button states
     }
 
     updateSelectedProgramsList() {
@@ -881,11 +819,30 @@ class StayAndImproveFlow {
             
             item.querySelector('.remove-program-btn').addEventListener('click', () => {
                 this.selectedPrograms.delete(program.id);
-                this.renderPrograms(document.querySelector('.program-filters .filter-btn.active').dataset.filter);
+                this.renderPrograms();
             });
             
             selectedList.appendChild(item);
         });
+    }
+
+    handleSavePrograms() {
+        // Get selected programs data
+        const selectedProgramsData = this.programsData
+            .filter(program => this.selectedPrograms.has(program.id));
+
+        // Save to local storage
+        localStorage.setItem('selectedPrograms', JSON.stringify(selectedProgramsData));
+
+        // Show success message
+        const messageElement = document.getElementById('save-success-message');
+        if (messageElement) {
+            messageElement.textContent = 'Programs saved successfully!';
+            messageElement.style.display = 'block';
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 3000);
+        }
     }
 
     generateStars(rating) {

@@ -1581,8 +1581,8 @@ svg {
 
 .radio-option,
 .checkbox-option {
-    margin-bottom: 1rem;
-    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     transition: all 0.3s ease;
@@ -1590,40 +1590,47 @@ svg {
 
 .radio-option:hover,
 .checkbox-option:hover {
-    background: #f7f9fc;
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
 }
 
-.radio-option input[type="radio"],
-.checkbox-option input[type="checkbox"] {
-    margin-right: 0.5rem;
-}
-
-/* Housing Options */
-.housing-links {
-    margin: 1.5rem 0;
-}
-
-.housing-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.housing-options a {
+.radio-option label,
+.checkbox-option label {
     display: block;
-    padding: 1rem;
-    text-align: center;
-    background: #f7f9fc;
-    border-radius: 8px;
-    color: #2c3e50;
-    text-decoration: none;
-    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
-.housing-options a:hover {
-    background: #3498db;
-    color: white;
+.neighborhood-desc,
+.school-desc,
+.program-desc {
+    margin: 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.walk-score,
+.school-rating,
+.program-type,
+.program-age,
+.program-schedule {
+    display: inline-block;
+    margin-right: 1rem;
+    padding: 0.25rem 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+.school-type {
+    color: #6c757d;
+    font-style: italic;
+    margin-left: 0.5rem;
+}
+
+.program-schedule {
+    color: #28a745;
 }
 
 /* Demographics Summary */
@@ -2090,7 +2097,8 @@ svg {
 }
 
 /* Enhanced Radio and Checkbox Options */
-.radio-option, .checkbox-option {
+.radio-option,
+.checkbox-option {
     margin-bottom: 1.5rem;
     padding: 1rem;
     border: 1px solid #e0e0e0;
@@ -2098,24 +2106,32 @@ svg {
     transition: all 0.3s ease;
 }
 
-.radio-option:hover, .checkbox-option:hover {
+.radio-option:hover,
+.checkbox-option:hover {
     border-color: #007bff;
     box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
 }
 
-.radio-option label, .checkbox-option label {
+.radio-option label,
+.checkbox-option label {
     display: block;
     cursor: pointer;
 }
 
-.neighborhood-desc, .school-desc, .program-desc {
+.neighborhood-desc,
+.school-desc,
+.program-desc {
     margin: 0.5rem 0;
     color: #666;
     font-size: 0.9rem;
     line-height: 1.4;
 }
 
-.walk-score, .school-rating, .program-type, .program-age, .program-schedule {
+.walk-score,
+.school-rating,
+.program-type,
+.program-age,
+.program-schedule {
     display: inline-block;
     margin-right: 1rem;
     padding: 0.25rem 0.5rem;
@@ -2181,7 +2197,8 @@ svg {
     margin-top: 0.5rem;
 }
 
-.school-rating, .school-distance {
+.school-rating,
+.school-distance {
     display: inline-block;
     padding: 0.25rem 0.5rem;
     background: #f8f9fa;
@@ -2583,4 +2600,77 @@ svg {
 
 .select-program-btn.selected:hover {
     background-color: #1e7e34;
+}
+
+/* Remove filter-related styles */
+.schools-section, .programs-section {
+    margin-bottom: 2rem;
+}
+
+.schools-list, .programs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.school-item, .program-item {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.school-item:hover, .program-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.school-header, .program-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.school-name, .program-name {
+    font-size: 1.2em;
+    margin: 0;
+    color: #2c3e50;
+    flex: 1;
+}
+
+.school-rating {
+    color: #f1c40f;
+    font-size: 1.2em;
+    white-space: nowrap;
+    margin-left: 1rem;
+}
+
+.school-type, .program-category {
+    color: #7f8c8d;
+    font-size: 0.9em;
+    margin-bottom: 0.8rem;
+}
+
+.school-description, .program-description {
+    color: #2c3e50;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.program-contact {
+    color: #7f8c8d;
+    font-style: italic;
+    margin-top: 0.8rem;
+    font-size: 0.9em;
+}
+
+.no-results {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+    padding: 2rem;
+    grid-column: 1 / -1;
 }
