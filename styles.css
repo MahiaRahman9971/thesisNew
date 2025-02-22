@@ -1578,7 +1578,7 @@ svg {
 .schools-list,
 .programs-list {
     margin: 1.5rem 0;
-    max-height: 300px;
+    max-height: 400px;
     overflow-y: auto;
     padding: 0.5rem;
 }
@@ -2215,4 +2215,150 @@ svg {
     color: #666;
     font-size: 0.9rem;
     line-height: 1.5;
+}
+
+/* Neighborhood Explorer Layout */
+.neighborhood-explorer {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.neighborhood-explorer h3 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.neighborhood-explorer .section-description {
+    text-align: center;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+}
+
+.neighborhood-explorer .content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.neighborhood-explorer #opportunity-map {
+    background: white;
+    padding: 1rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.neighborhood-explorer .neighborhood-selection {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.neighborhood-selection form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.neighborhood-selection .neighborhood-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 1rem;
+}
+
+/* Hide the radio button circle */
+.neighborhood-selection input[type="radio"] {
+    display: none;
+}
+
+/* Style the neighborhood options */
+.neighborhood-selection .radio-option {
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* Highlight on hover */
+.neighborhood-selection .radio-option:hover {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+}
+
+/* Highlight when selected */
+.neighborhood-selection input[type="radio"]:checked + label {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+    border-radius: 8px;
+    padding: 1rem;
+    display: block;
+    margin: -1rem;
+}
+
+.neighborhood-selection .button-group {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.neighborhood-selection h5 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.neighborhood-selection .neighborhood-desc {
+    margin: 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.neighborhood-selection .neighborhood-stats {
+    margin-top: 0.75rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.neighborhood-selection .walk-score {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: #f1f8ff;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #0366d6;
+}
+
+/* Custom scrollbar for the neighborhood list */
+.neighborhood-selection .neighborhood-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.neighborhood-selection .neighborhood-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.neighborhood-selection .neighborhood-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.neighborhood-selection .neighborhood-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }

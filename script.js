@@ -150,21 +150,26 @@ class ExploreNewAreasFlow {
 
             case 'neighborhoods':
                 return `
-                    <div class="${baseClass}">
+                    <div class="neighborhood-explorer">
                         <h3>Explore Neighborhoods</h3>
-                        <div id="opportunity-map">
-                            <p><em>Opportunity Map Coming Soon</em></p>
+                        <p class="section-description">Discover the best neighborhoods for your family based on your preferences</p>
+                        <div class="content">
+                            <div id="opportunity-map">
+                                <p><em>Opportunity Map Coming Soon</em></p>
+                            </div>
+                            <div class="neighborhood-selection">
+                                <h4>Top Neighborhoods in ${this.data.zipCode}</h4>
+                                <form id="neighborhood-form">
+                                    <div class="neighborhood-list">
+                                        ${await this.getNeighborhoodOptions()}
+                                    </div>
+                                    <div class="button-group">
+                                        <button type="button" class="back-btn">Back</button>
+                                        <button type="submit" class="next-btn">Next</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                        <form id="neighborhood-form">
-                            <h4>Top Neighborhoods in ${this.data.zipCode}</h4>
-                            <div class="neighborhood-list">
-                                ${await this.getNeighborhoodOptions()}
-                            </div>
-                            <div class="button-group">
-                                <button type="button" class="back-btn">Back</button>
-                                <button type="submit" class="next-btn">Next</button>
-                            </div>
-                        </form>
                     </div>
                 `;
 
@@ -320,9 +325,11 @@ class ExploreNewAreasFlow {
             <div class="radio-option">
                 <input type="radio" name="neighborhood" value="${n.name}" id="${n.name}" required>
                 <label for="${n.name}">
-                    <strong>${n.name}</strong>
+                    <h5>${n.name}</h5>
                     <p class="neighborhood-desc">${n.description}</p>
-                    <span class="walk-score">Walk Score: ${n.walkScore}</span>
+                    <div class="neighborhood-stats">
+                        <span class="walk-score">Walk Score: ${n.walkScore}</span>
+                    </div>
                 </label>
             </div>
         `).join('');
