@@ -122,9 +122,6 @@ class ExploreNewAreasFlow {
                 this.showActionPlanSummary();
             });
         }
-
-        // Update the progress indicator
-        this.updateNextButton();
     }
 
     async getStepContent() {
@@ -150,21 +147,26 @@ class ExploreNewAreasFlow {
 
             case 'neighborhoods':
                 return `
-                    <div class="${baseClass}">
+                    <div class="neighborhood-explorer">
                         <h3>Explore Neighborhoods</h3>
-                        <div id="opportunity-map">
-                            <p><em>Opportunity Map Coming Soon</em></p>
+                        <p class="section-description">Discover the best neighborhoods for your family based on your preferences</p>
+                        <div class="content">
+                            <div id="opportunity-map">
+                                <p><em>Opportunity Map Coming Soon</em></p>
+                            </div>
+                            <div class="neighborhood-selection">
+                                <h4>Top Neighborhoods in ${this.data.zipCode}</h4>
+                                <form id="neighborhood-form">
+                                    <div class="neighborhood-list">
+                                        ${await this.getNeighborhoodOptions()}
+                                    </div>
+                                    <div class="button-group">
+                                        <button type="button" class="back-btn">Back</button>
+                                        <button type="submit" class="next-btn">Next</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                        <form id="neighborhood-form">
-                            <h4>Top Neighborhoods in ${this.data.zipCode}</h4>
-                            <div class="neighborhood-list">
-                                ${await this.getNeighborhoodOptions()}
-                            </div>
-                            <div class="button-group">
-                                <button type="button" class="back-btn">Back</button>
-                                <button type="submit" class="next-btn">Next</button>
-                            </div>
-                        </form>
                     </div>
                 `;
 
@@ -247,13 +249,13 @@ class ExploreNewAreasFlow {
         document.body.appendChild(loadingOverlay);
 
         try {
-            const [neighborhoods, schools, programs] = await Promise.all([
-                fetch('/api/neighborhoods', {
+            const [neighborhoods, schools, programsResponse] = await Promise.all([
+                fetch('http://localhost:3000/api/neighborhoods', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ zipCode: this.data.zipCode })
                 }).then(res => res.json()),
-                fetch('/api/schools', {
+                fetch('http://localhost:3000/api/schools-move', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
@@ -261,17 +263,28 @@ class ExploreNewAreasFlow {
                         childAge: this.data.childAge 
                     })
                 }).then(res => res.json()),
-                fetch('/api/programs', {
+                fetch('http://localhost:3000/api/programs', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ zipCode: this.data.zipCode })
                 }).then(res => res.json())
             ]);
 
-            this.cachedData = { neighborhoods, schools, programs };
+            // Extract programs array from response
+            const programs = programsResponse && programsResponse.programs ? programsResponse.programs : [];
+
+            this.cachedData = { 
+                neighborhoods, 
+                schools,
+                programs // Store just the programs array
+            };
         } catch (error) {
             console.error('Error fetching data:', error);
-            this.cachedData = null;
+            this.cachedData = {
+                neighborhoods: [],
+                schools: [],
+                programs: []
+            };
         } finally {
             loadingOverlay.remove();
         }
@@ -320,9 +333,11 @@ class ExploreNewAreasFlow {
             <div class="radio-option">
                 <input type="radio" name="neighborhood" value="${n.name}" id="${n.name}" required>
                 <label for="${n.name}">
-                    <strong>${n.name}</strong>
+                    <h5>${n.name}</h5>
                     <p class="neighborhood-desc">${n.description}</p>
-                    <span class="walk-score">Walk Score: ${n.walkScore}</span>
+                    <div class="neighborhood-stats">
+                        <span class="walk-score">Walk Score: ${n.walkScore}</span>
+                    </div>
                 </label>
             </div>
         `).join('');
@@ -350,19 +365,24 @@ class ExploreNewAreasFlow {
     }
 
     async getCommunityPrograms() {
-        if (!this.cachedData) {
+        if (!this.cachedData || !this.cachedData.programs) {
             return '<p>Please enter a ZIP code first.</p>';
         }
 
-        return this.cachedData.programs.map(p => `
+        // Ensure programs is an array
+        const programs = Array.isArray(this.cachedData.programs) ? this.cachedData.programs : [];
+        if (programs.length === 0) {
+            return '<p>No programs found in this area.</p>';
+        }
+
+        return programs.map(p => `
             <div class="checkbox-option">
                 <input type="checkbox" name="program" value="${p.name}" id="${p.name}">
                 <label for="${p.name}">
                     <strong>${p.name}</strong>
-                    <span class="program-type">${p.type}</span>
+                    <span class="program-type">${p.category}</span>
                     <p class="program-desc">${p.description}</p>
-                    <span class="program-age">Ages ${p.ageRange[0]}-${p.ageRange[1]}</span>
-                    <span class="program-schedule">${p.schedule}</span>
+                    <div class="program-contact">${p.contact}</div>
                 </label>
             </div>
         `).join('');
@@ -529,6 +549,333 @@ class ExploreNewAreasFlow {
     }
 }
 
+class StayAndImproveFlow {
+    constructor() {
+        this.zipCode = '';
+        this.selectedPrograms = new Set();
+        this.schoolsData = [];
+        this.programsData = [];
+        
+        // Bind event handlers
+        this.handleStayOptionClick = this.handleStayOptionClick.bind(this);
+        this.handleProgramSelection = this.handleProgramSelection.bind(this);
+        this.handleSavePrograms = this.handleSavePrograms.bind(this);
+        
+        // Initialize event listeners
+        this.initializeEventListeners();
+    }
+
+    initializeEventListeners() {
+        document.getElementById('stay-action-btn').addEventListener('click', this.handleStayOptionClick);
+        
+        // Save programs button
+        document.getElementById('save-programs-btn').addEventListener('click', this.handleSavePrograms);
+    }
+
+    async handleStayOptionClick() {
+        const detailsSection = document.getElementById('stay-improve-details');
+        const loadingIndicator = detailsSection.querySelector('.loading-indicator');
+        
+        // Show loading state
+        detailsSection.classList.remove('hidden');
+        loadingIndicator.classList.remove('hidden');
+        
+        // Scroll to the details section
+        detailsSection.scrollIntoView({ behavior: 'smooth' });
+        
+        try {
+            // Get zip code from local storage
+            const quizData = JSON.parse(localStorage.getItem('personalizationQuiz') || '{}');
+            console.log('Quiz data from localStorage:', quizData); // Debug log
+            
+            this.zipCode = quizData.zipCode || '';
+            console.log('Retrieved zip code:', this.zipCode); // Debug log
+            
+            if (!this.zipCode) {
+                throw new Error('Please complete the personalization quiz first to provide your zip code.');
+            }
+            
+            // Fetch data in parallel
+            await Promise.all([
+                this.fetchTownshipInfo(),
+                this.fetchSchools(),
+                this.fetchCommunityPrograms()
+            ]);
+            
+        } catch (error) {
+            console.error('Error in stay option flow:', error);
+            alert(error.message || 'An error occurred while loading your community information. Please try again.');
+        } finally {
+            loadingIndicator.classList.add('hidden');
+        }
+    }
+
+    async fetchTownshipInfo() {
+        try {
+            const response = await fetch('http://localhost:3000/api/township', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ zipCode: this.zipCode })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch township info');
+            }
+
+            const data = await response.json();
+            
+            // Update UI
+            this.renderTownshipInfo(data);
+        } catch (error) {
+            console.error('Error fetching township info:', error);
+            throw error;
+        }
+    }
+
+    renderTownshipInfo(data) {
+        const townshipName = document.getElementById('township-name');
+        const townshipDescription = document.getElementById('township-description');
+        const townshipWebsite = document.getElementById('township-website');
+        
+        if (townshipName) {
+            townshipName.textContent = data.townshipName || 'Township information not available';
+        }
+        
+        if (townshipDescription) {
+            if (Array.isArray(data.description) && data.description.length > 0) {
+                const bulletPoints = data.description
+                    .map(point => `<li>${point}</li>`)
+                    .join('');
+                townshipDescription.innerHTML = `<ul class="township-bullets">${bulletPoints}</ul>`;
+            } else {
+                townshipDescription.textContent = 'Description not available';
+            }
+        }
+        
+        if (townshipWebsite) {
+            if (data.websiteUrl) {
+                const url = data.websiteUrl.startsWith('http') ? data.websiteUrl : `https://${data.websiteUrl}`;
+                townshipWebsite.innerHTML = `
+                    <a href="${url}" class="township-link" target="_blank" rel="noopener noreferrer">
+                        Visit Township Website
+                    </a>
+                `;
+            } else {
+                townshipWebsite.innerHTML = `
+                    <span class="township-link disabled">Website not available</span>
+                `;
+            }
+        }
+    }
+
+    async fetchSchools() {
+        try {
+            const response = await fetch('http://localhost:3000/api/schools-stay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    zipCode: this.zipCode,
+                    childAge: this.getChildAge()
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch schools');
+            }
+
+            const data = await response.json();
+            this.schoolsData = data.schools || [];
+            
+            // Render all schools initially
+            this.renderSchools();
+        } catch (error) {
+            console.error('Error fetching schools:', error);
+            throw error;
+        }
+    }
+
+    async fetchCommunityPrograms() {
+        try {
+            const response = await fetch('http://localhost:3000/api/programs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    zipCode: this.zipCode 
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch community programs');
+            }
+
+            const data = await response.json();
+            // Ensure programsData is always an array
+            this.programsData = Array.isArray(data.programs) ? data.programs : [];
+            
+            // Render all programs initially
+            this.renderPrograms();
+        } catch (error) {
+            console.error('Error fetching community programs:', error);
+            this.programsData = [];
+            this.renderPrograms();
+        }
+    }
+
+    renderSchools() {
+        const schoolsList = document.getElementById('schools-list');
+        if (!schoolsList) return;
+        
+        schoolsList.innerHTML = '';
+        
+        if (!Array.isArray(this.schoolsData)) {
+            console.error('Schools data is not an array:', this.schoolsData);
+            return;
+        }
+
+        // Sort schools by rating (highest to lowest)
+        const sortedSchools = [...this.schoolsData].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+
+        if (sortedSchools.length === 0) {
+            schoolsList.innerHTML = '<p class="no-results">No schools found.</p>';
+            return;
+        }
+
+        sortedSchools.forEach(school => {
+            const schoolElement = document.createElement('div');
+            schoolElement.className = 'school-item';
+            schoolElement.innerHTML = `
+                <div class="school-header">
+                    <h4 class="school-name">${school.name || 'School Name Not Available'}</h4>
+                    <div class="school-rating">
+                        ${this.generateStars(school.rating || 0)}
+                    </div>
+                </div>
+                <p class="school-type">${school.gradeLevel || school.type || 'Grade Level Not Available'}</p>
+                <p class="school-description">${school.description || 'No description available.'}</p>
+            `;
+            schoolsList.appendChild(schoolElement);
+        });
+    }
+
+    renderPrograms() {
+        const programsList = document.getElementById('programs-list');
+        if (!programsList) return;
+        
+        programsList.innerHTML = '';
+        
+        // Ensure programsData is always an array
+        if (!Array.isArray(this.programsData)) {
+            console.error('Programs data is not an array:', this.programsData);
+            this.programsData = [];
+        }
+
+        if (this.programsData.length === 0) {
+            programsList.innerHTML = '<p class="no-results">No programs found in your area.</p>';
+            return;
+        }
+
+        this.programsData.forEach(program => {
+            const programElement = document.createElement('div');
+            programElement.className = 'program-item';
+            programElement.innerHTML = `
+                <div class="program-header">
+                    <h4 class="program-name">${program.name || 'Program Name Not Available'}</h4>
+                    <span class="program-category">${program.category || 'Category Not Available'}</span>
+                </div>
+                <p class="program-description">${program.description || 'No description available.'}</p>
+                <p class="program-contact">${program.contact || 'Contact information not available.'}</p>
+                <button class="select-program-btn ${this.selectedPrograms.has(program.id) ? 'selected' : ''}" data-id="${program.id}">
+                    ${this.selectedPrograms.has(program.id) ? '✓ Selected' : 'Select Program'}
+                </button>
+            `;
+            
+            // Add event listener to the select button
+            const selectBtn = programElement.querySelector('.select-program-btn');
+            if (selectBtn) {
+                selectBtn.addEventListener('click', () => this.handleProgramSelection(program.id));
+            }
+            
+            programsList.appendChild(programElement);
+        });
+        
+        this.updateSelectedProgramsList();
+    }
+
+    handleProgramSelection(programId) {
+        if (this.selectedPrograms.has(programId)) {
+            this.selectedPrograms.delete(programId);
+        } else {
+            this.selectedPrograms.add(programId);
+        }
+        this.renderPrograms(); // Re-render to update button states
+    }
+
+    updateSelectedProgramsList() {
+        const selectedList = document.getElementById('selected-programs-list');
+        selectedList.innerHTML = '';
+        
+        const selectedProgramsData = this.programsData.filter(p => this.selectedPrograms.has(p.id));
+        
+        if (selectedProgramsData.length === 0) {
+            selectedList.innerHTML = '<p class="no-selections">No programs selected</p>';
+            return;
+        }
+        
+        selectedProgramsData.forEach(program => {
+            const item = document.createElement('div');
+            item.className = 'selected-program-item';
+            item.innerHTML = `
+                <span>${program.name}</span>
+                <button class="remove-program-btn" data-id="${program.id}">×</button>
+            `;
+            
+            item.querySelector('.remove-program-btn').addEventListener('click', () => {
+                this.selectedPrograms.delete(program.id);
+                this.renderPrograms();
+            });
+            
+            selectedList.appendChild(item);
+        });
+    }
+
+    handleSavePrograms() {
+        // Get selected programs data
+        const selectedProgramsData = this.programsData
+            .filter(program => this.selectedPrograms.has(program.id));
+
+        // Save to local storage
+        localStorage.setItem('selectedPrograms', JSON.stringify(selectedProgramsData));
+
+        // Show success message
+        const messageElement = document.getElementById('save-success-message');
+        if (messageElement) {
+            messageElement.textContent = 'Programs saved successfully!';
+            messageElement.style.display = 'block';
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 3000);
+        }
+    }
+
+    generateStars(rating) {
+        const fullStar = '★';
+        const emptyStar = '☆';
+        return Array(5).fill('').map((_, i) => i < rating ? fullStar : emptyStar).join('');
+    }
+
+    // Helper method to get child age from quiz data
+    getChildAge() {
+        const quizData = JSON.parse(localStorage.getItem('personalizationQuiz') || '{}');
+        return parseInt(quizData['child1-age']) || 10; // Default to 10 if not found
+    }
+}
+
 // Initialize everything when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize progress bar and animations
@@ -602,6 +949,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const exploreFlow = new ExploreNewAreasFlow();
     exploreFlow.init();
 
+    // Initialize StayAndImproveFlow
+    const stayAndImproveFlow = new StayAndImproveFlow();
+
     // Initialize factor card interactions
     document.querySelectorAll('.factor-card').forEach(card => {
         card.addEventListener('click', () => {
@@ -640,6 +990,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'parent-phone': formData.get('parent-phone'),
                 'income': formData.get('income'),
                 'country': formData.get('country'),
+                'zipCode': formData.get('zipCode'), // Match the HTML form field name
                 
                 // Child Information (for first child)
                 'child1-name': formData.get('child1-name'),
@@ -648,8 +999,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 'child1-ethnicity': formData.get('child1-ethnicity')
             };
             
+            console.log('Form data being saved:', quizData); // Debug log
+            
             // Save to localStorage
             localStorage.setItem('personalizationQuiz', JSON.stringify(quizData));
+            
+            // Verify data was saved correctly
+            const savedData = JSON.parse(localStorage.getItem('personalizationQuiz'));
+            console.log('Data after saving:', savedData); // Debug log
             
             // Show success checkmark
             const checkmark = document.getElementById('submit-success');

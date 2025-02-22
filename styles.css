@@ -1392,10 +1392,6 @@ svg {
     margin-top: 20px;
 }
 
-.program-category h6 {
-    margin-bottom: 15px;
-}
-
 .programs-grid {
     display: grid;
     gap: 15px;
@@ -1578,15 +1574,15 @@ svg {
 .schools-list,
 .programs-list {
     margin: 1.5rem 0;
-    max-height: 300px;
+    max-height: 400px;
     overflow-y: auto;
     padding: 0.5rem;
 }
 
 .radio-option,
 .checkbox-option {
-    margin-bottom: 1rem;
-    padding: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     transition: all 0.3s ease;
@@ -1594,40 +1590,47 @@ svg {
 
 .radio-option:hover,
 .checkbox-option:hover {
-    background: #f7f9fc;
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
 }
 
-.radio-option input[type="radio"],
-.checkbox-option input[type="checkbox"] {
-    margin-right: 0.5rem;
-}
-
-/* Housing Options */
-.housing-links {
-    margin: 1.5rem 0;
-}
-
-.housing-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-}
-
-.housing-options a {
+.radio-option label,
+.checkbox-option label {
     display: block;
-    padding: 1rem;
-    text-align: center;
-    background: #f7f9fc;
-    border-radius: 8px;
-    color: #2c3e50;
-    text-decoration: none;
-    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
-.housing-options a:hover {
-    background: #3498db;
-    color: white;
+.neighborhood-desc,
+.school-desc,
+.program-desc {
+    margin: 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.walk-score,
+.school-rating,
+.program-type,
+.program-age,
+.program-schedule {
+    display: inline-block;
+    margin-right: 1rem;
+    padding: 0.25rem 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+.school-type {
+    color: #6c757d;
+    font-style: italic;
+    margin-left: 0.5rem;
+}
+
+.program-schedule {
+    color: #28a745;
 }
 
 /* Demographics Summary */
@@ -2084,27 +2087,18 @@ svg {
 }
 
 @keyframes scale-up {
-    0% {
-        opacity: 0;
-        transform: scale(0.5);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
 
 @keyframes check {
-    0% {
-        transform: translate(-50%, -65%) rotate(-45deg) scale(0);
-    }
-    100% {
-        transform: translate(-50%, -65%) rotate(-45deg) scale(1);
-    }
+    0% { transform: translate(-50%, -65%) rotate(-45deg) scale(0); }
+    100% { transform: translate(-50%, -65%) rotate(-45deg) scale(1); }
 }
 
 /* Enhanced Radio and Checkbox Options */
-.radio-option, .checkbox-option {
+.radio-option,
+.checkbox-option {
     margin-bottom: 1.5rem;
     padding: 1rem;
     border: 1px solid #e0e0e0;
@@ -2112,24 +2106,32 @@ svg {
     transition: all 0.3s ease;
 }
 
-.radio-option:hover, .checkbox-option:hover {
+.radio-option:hover,
+.checkbox-option:hover {
     border-color: #007bff;
     box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
 }
 
-.radio-option label, .checkbox-option label {
+.radio-option label,
+.checkbox-option label {
     display: block;
     cursor: pointer;
 }
 
-.neighborhood-desc, .school-desc, .program-desc {
+.neighborhood-desc,
+.school-desc,
+.program-desc {
     margin: 0.5rem 0;
     color: #666;
     font-size: 0.9rem;
     line-height: 1.4;
 }
 
-.walk-score, .school-rating, .program-type, .program-age, .program-schedule {
+.walk-score,
+.school-rating,
+.program-type,
+.program-age,
+.program-schedule {
     display: inline-block;
     margin-right: 1rem;
     padding: 0.25rem 0.5rem;
@@ -2195,7 +2197,8 @@ svg {
     margin-top: 0.5rem;
 }
 
-.school-rating, .school-distance {
+.school-rating,
+.school-distance {
     display: inline-block;
     padding: 0.25rem 0.5rem;
     background: #f8f9fa;
@@ -2215,4 +2218,459 @@ svg {
     color: #666;
     font-size: 0.9rem;
     line-height: 1.5;
+}
+
+/* Neighborhood Explorer Layout */
+.neighborhood-explorer {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.neighborhood-explorer h3 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.neighborhood-explorer .section-description {
+    text-align: center;
+    color: var(--text-color);
+    margin-bottom: 2rem;
+}
+
+.neighborhood-explorer .content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.neighborhood-explorer #opportunity-map {
+    background: white;
+    padding: 1rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.neighborhood-explorer .neighborhood-selection {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    min-height: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.neighborhood-selection form {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.neighborhood-selection .neighborhood-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 1rem;
+}
+
+/* Hide the radio button circle */
+.neighborhood-selection input[type="radio"] {
+    display: none;
+}
+
+/* Style the neighborhood options */
+.neighborhood-selection .radio-option {
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* Highlight on hover */
+.neighborhood-selection .radio-option:hover {
+    background-color: #f8f9fa;
+    border-color: #e9ecef;
+}
+
+/* Highlight when selected */
+.neighborhood-selection input[type="radio"]:checked + label {
+    background-color: #e3f2fd;
+    border-color: #2196f3;
+    border-radius: 8px;
+    padding: 1rem;
+    display: block;
+    margin: -1rem;
+}
+
+.neighborhood-selection .button-group {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.neighborhood-selection h5 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.neighborhood-selection .neighborhood-desc {
+    margin: 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.neighborhood-selection .neighborhood-stats {
+    margin-top: 0.75rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.neighborhood-selection .walk-score {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: #f1f8ff;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #0366d6;
+}
+
+/* Custom scrollbar for the neighborhood list */
+.neighborhood-selection .neighborhood-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.neighborhood-selection .neighborhood-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.neighborhood-selection .neighborhood-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.neighborhood-selection .neighborhood-list::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Stay and Improve Section Styles */
+.stay-improve-details {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stay-improve-details.hidden {
+    display: none;
+}
+
+.details-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 2rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.township-info,
+.schools-section,
+.programs-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    width: 100%;
+}
+
+.schools-list,
+.programs-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-top: 1rem;
+}
+
+@media (max-width: 1200px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .township-info,
+    .schools-section,
+    .programs-section {
+        width: 100%;
+    }
+    
+    .schools-list,
+    .programs-list {
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .township-info,
+    .schools-section,
+    .programs-section {
+        width: 100%;
+    }
+    
+    .schools-list,
+    .programs-list {
+        max-height: 200px;
+    }
+}
+
+.loading-indicator {
+    text-align: center;
+    padding: 2rem;
+}
+
+.loading-indicator .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.township-info {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.township-info h3 {
+    margin: 0 0 15px 0;
+    color: #2c3e50;
+    font-size: 1.5em;
+}
+
+.township-bullets {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.township-bullets li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+    color: #2c3e50;
+}
+
+#township-website {
+    margin-top: 15px;
+}
+
+.township-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white !important;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.township-link:hover {
+    background-color: #0056b3;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.township-link.disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* School styles */
+.school-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.school-name {
+    font-size: 1.2em;
+    margin: 0;
+    flex: 1;
+}
+
+.school-rating {
+    font-size: 1.1em;
+    color: #ffd700;
+    white-space: nowrap;
+}
+
+.school-type {
+    color: #666;
+    margin: 5px 0;
+    font-style: italic;
+}
+
+.school-description {
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+.school-item {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Township Link */
+.township-link {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.township-link:hover {
+    background-color: #0056b3;
+}
+
+.township-link.disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Program Selection Button */
+.select-program-btn {
+    display: inline-block;
+    padding: 8px 16px;
+    margin-top: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 0.9em;
+}
+
+.select-program-btn:hover {
+    background-color: #218838;
+}
+
+.select-program-btn.selected {
+    background-color: #218838;
+}
+
+.select-program-btn.selected:hover {
+    background-color: #1e7e34;
+}
+
+/* Remove filter-related styles */
+.schools-section, .programs-section {
+    margin-bottom: 2rem;
+}
+
+.schools-list, .programs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.school-item, .program-item {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.school-item:hover, .program-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.school-header, .program-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.school-name, .program-name {
+    font-size: 1.2em;
+    margin: 0;
+    color: #2c3e50;
+    flex: 1;
+}
+
+.school-rating {
+    color: #f1c40f;
+    font-size: 1.2em;
+    white-space: nowrap;
+    margin-left: 1rem;
+}
+
+.school-type, .program-category {
+    color: #7f8c8d;
+    font-size: 0.9em;
+    margin-bottom: 0.8rem;
+}
+
+.school-description, .program-description {
+    color: #2c3e50;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.program-contact {
+    color: #7f8c8d;
+    font-style: italic;
+    margin-top: 0.8rem;
+    font-size: 0.9em;
+}
+
+.no-results {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+    padding: 2rem;
+    grid-column: 1 / -1;
 }
