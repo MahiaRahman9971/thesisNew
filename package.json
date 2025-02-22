@@ -1,0 +1,14 @@
+{
+  "name": "economic-mobility-guide",
+  "version": "1.0.0",
+  "description": "A guide to help families make informed decisions about economic mobility",
+  "main": "server.js",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "openai": "^4.0.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}

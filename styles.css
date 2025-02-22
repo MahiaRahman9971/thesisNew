@@ -1589,7 +1589,7 @@ svg {
     padding: 0.75rem;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
 }
 
 .radio-option:hover,
@@ -1622,7 +1622,7 @@ svg {
     border-radius: 8px;
     color: #2c3e50;
     text-decoration: none;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
 }
 
 .housing-options a:hover {
@@ -2101,4 +2101,118 @@ svg {
     100% {
         transform: translate(-50%, -65%) rotate(-45deg) scale(1);
     }
+}
+
+/* Enhanced Radio and Checkbox Options */
+.radio-option, .checkbox-option {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.radio-option:hover, .checkbox-option:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+}
+
+.radio-option label, .checkbox-option label {
+    display: block;
+    cursor: pointer;
+}
+
+.neighborhood-desc, .school-desc, .program-desc {
+    margin: 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.walk-score, .school-rating, .program-type, .program-age, .program-schedule {
+    display: inline-block;
+    margin-right: 1rem;
+    padding: 0.25rem 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+.school-type {
+    color: #6c757d;
+    font-style: italic;
+    margin-left: 0.5rem;
+}
+
+.program-schedule {
+    color: #28a745;
+}
+
+/* Loading Animation */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-overlay.show {
+    display: flex;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-text {
+    position: absolute;
+    margin-top: 80px;
+    color: #007bff;
+    font-weight: 500;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* School Details */
+.school-details {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.school-rating, .school-distance {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+.school-type {
+    color: #0056b3;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.school-desc {
+    margin: 0.75rem 0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
 }

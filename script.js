@@ -21,9 +21,10 @@ class ExploreNewAreasFlow {
             'summary'
         ];
         this.flowContainer = null;
+        this.cachedData = null;
     }
 
-    init() {
+    async init() {
         console.log('Initializing ExploreNewAreasFlow');
         // Get personalization data
         const quizData = JSON.parse(localStorage.getItem('personalizationQuiz') || '{}');
@@ -236,46 +237,56 @@ class ExploreNewAreasFlow {
         }
     }
 
-    async getSchoolOptions() {
-        console.log('Getting school options');
-        const schools = [
-            { name: 'Washington Elementary', type: 'elementary', ageRange: [5, 11] },
-            { name: 'Lincoln Middle School', type: 'middle', ageRange: [11, 14] },
-            { name: 'Roosevelt High', type: 'high', ageRange: [14, 18] },
-            { name: 'Montessori Academy', type: 'elementary', ageRange: [3, 11] },
-            { name: 'STEM Magnet School', type: 'middle', ageRange: [11, 14] },
-            { name: 'Early Learning Center', type: 'preschool', ageRange: [3, 5] },
-            { name: 'College Prep Academy', type: 'high', ageRange: [14, 18] }
-        ];
-        
-        // Filter schools based on child's age
-        const childAge = parseInt(this.data.childAge);
-        const appropriateSchools = schools.filter(school => 
-            childAge >= school.ageRange[0] && childAge <= school.ageRange[1]
-        );
-        
-        if (appropriateSchools.length === 0) {
-            return `<p>No schools found for age ${childAge}. Please contact the local school district for more options.</p>`;
+    async fetchAllData() {
+        const loadingOverlay = document.createElement('div');
+        loadingOverlay.className = 'loading-overlay show';
+        loadingOverlay.innerHTML = `
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Fetching community data for ${this.data.zipCode}...</div>
+        `;
+        document.body.appendChild(loadingOverlay);
+
+        try {
+            const [neighborhoods, schools, programs] = await Promise.all([
+                fetch('/api/neighborhoods', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ zipCode: this.data.zipCode })
+                }).then(res => res.json()),
+                fetch('/api/schools', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        zipCode: this.data.zipCode,
+                        childAge: this.data.childAge 
+                    })
+                }).then(res => res.json()),
+                fetch('/api/programs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ zipCode: this.data.zipCode })
+                }).then(res => res.json())
+            ]);
+
+            this.cachedData = { neighborhoods, schools, programs };
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            this.cachedData = null;
+        } finally {
+            loadingOverlay.remove();
         }
-        
-        return appropriateSchools.map(s => `
-            <div class="radio-option">
-                <input type="radio" name="school" value="${s.name}" id="${s.name}" required>
-                <label for="${s.name}">
-                    ${s.name}
-                    <span class="school-type">(${s.type})</span>
-                </label>
-            </div>
-        `).join('');
     }
 
     async handleStepSubmit(e) {
+        e.preventDefault();
         console.log('Handling step submit');
         const formData = new FormData(e.target);
         
         switch (this.steps[this.currentStep]) {
             case 'location':
                 this.data.zipCode = formData.get('zipCode');
+                // Fetch all data when zipcode is submitted
+                await this.fetchAllData();
                 break;
             case 'neighborhoods':
                 this.data.selectedNeighborhood = formData.get('neighborhood');
@@ -289,10 +300,6 @@ class ExploreNewAreasFlow {
             case 'programs':
                 this.data.selectedPrograms = Array.from(formData.getAll('program'));
                 break;
-            case 'demographics':
-                this.data.countryOfOrigin = formData.get('countryOfOrigin');
-                this.data.ethnicity = formData.get('ethnicity');
-                break;
         }
 
         // Move to next step
@@ -304,52 +311,68 @@ class ExploreNewAreasFlow {
         }
     }
 
-    navigateStep(direction) {
-        console.log('Navigating step:', direction);
-        // Update step
-        this.currentStep += direction;
-        this.showCurrentStep();
+    async getNeighborhoodOptions() {
+        if (!this.cachedData) {
+            return '<p>Please enter a ZIP code first.</p>';
+        }
+
+        return this.cachedData.neighborhoods.map(n => `
+            <div class="radio-option">
+                <input type="radio" name="neighborhood" value="${n.name}" id="${n.name}" required>
+                <label for="${n.name}">
+                    <strong>${n.name}</strong>
+                    <p class="neighborhood-desc">${n.description}</p>
+                    <span class="walk-score">Walk Score: ${n.walkScore}</span>
+                </label>
+            </div>
+        `).join('');
     }
 
-    // Mock data methods - replace with real API calls
-    async getNeighborhoodOptions() {
-        console.log('Getting neighborhood options');
-        const neighborhoods = [
-            'Downtown District',
-            'Riverside Community',
-            'Park Heights',
-            'University Area',
-            'Tech Corridor'
-        ];
-        
-        return neighborhoods.map(n => `
+    async getSchoolOptions() {
+        if (!this.cachedData) {
+            return '<p>Please enter a ZIP code first.</p>';
+        }
+
+        return this.cachedData.schools.map(s => `
             <div class="radio-option">
-                <input type="radio" name="neighborhood" value="${n}" id="${n}" required>
-                <label for="${n}">${n}</label>
+                <input type="radio" name="school" value="${s.name}" id="${s.name}" required>
+                <label for="${s.name}">
+                    <strong>${s.name}</strong>
+                    <span class="school-type">(${s.type} - ${s.gradeRange})</span>
+                    <p class="school-desc">${s.description}</p>
+                    <div class="school-details">
+                        <span class="school-rating">Rating: ${s.rating}/10</span>
+                        <span class="school-distance">${s.distance} from ${this.data.zipCode}</span>
+                    </div>
+                </label>
             </div>
         `).join('');
     }
 
     async getCommunityPrograms() {
-        console.log('Getting community programs');
-        const programs = [
-            'After School Program',
-            'Youth Sports League',
-            'Cultural Center',
-            'Library Reading Club',
-            'STEM Workshop Series',
-            'Art & Music Program',
-            'Language Learning Center'
-        ];
-        
-        return programs.map(p => `
+        if (!this.cachedData) {
+            return '<p>Please enter a ZIP code first.</p>';
+        }
+
+        return this.cachedData.programs.map(p => `
             <div class="checkbox-option">
-                <input type="checkbox" name="program" value="${p}" id="${p}">
-                <label for="${p}">${p}</label>
+                <input type="checkbox" name="program" value="${p.name}" id="${p.name}">
+                <label for="${p.name}">
+                    <strong>${p.name}</strong>
+                    <span class="program-type">${p.type}</span>
+                    <p class="program-desc">${p.description}</p>
+                    <span class="program-age">Ages ${p.ageRange[0]}-${p.ageRange[1]}</span>
+                    <span class="program-schedule">${p.schedule}</span>
+                </label>
             </div>
-        `).join('') + `
-        <p class="helper-text">Please select at least one program to continue</p>
-        `;
+        `).join('');
+    }
+
+    navigateStep(direction) {
+        console.log('Navigating step:', direction);
+        // Update step
+        this.currentStep += direction;
+        this.showCurrentStep();
     }
 
     async getDemographicsSummary() {
