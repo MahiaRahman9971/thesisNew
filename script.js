@@ -249,7 +249,7 @@ class ExploreNewAreasFlow {
         document.body.appendChild(loadingOverlay);
 
         try {
-            const [neighborhoods, schools, programs] = await Promise.all([
+            const [neighborhoods, schools, programsResponse] = await Promise.all([
                 fetch('http://localhost:3000/api/neighborhoods', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -270,10 +270,21 @@ class ExploreNewAreasFlow {
                 }).then(res => res.json())
             ]);
 
-            this.cachedData = { neighborhoods, schools, programs };
+            // Extract programs array from response
+            const programs = programsResponse && programsResponse.programs ? programsResponse.programs : [];
+
+            this.cachedData = { 
+                neighborhoods, 
+                schools,
+                programs // Store just the programs array
+            };
         } catch (error) {
             console.error('Error fetching data:', error);
-            this.cachedData = null;
+            this.cachedData = {
+                neighborhoods: [],
+                schools: [],
+                programs: []
+            };
         } finally {
             loadingOverlay.remove();
         }
@@ -354,19 +365,24 @@ class ExploreNewAreasFlow {
     }
 
     async getCommunityPrograms() {
-        if (!this.cachedData) {
+        if (!this.cachedData || !this.cachedData.programs) {
             return '<p>Please enter a ZIP code first.</p>';
         }
 
-        return this.cachedData.programs.map(p => `
+        // Ensure programs is an array
+        const programs = Array.isArray(this.cachedData.programs) ? this.cachedData.programs : [];
+        if (programs.length === 0) {
+            return '<p>No programs found in this area.</p>';
+        }
+
+        return programs.map(p => `
             <div class="checkbox-option">
                 <input type="checkbox" name="program" value="${p.name}" id="${p.name}">
                 <label for="${p.name}">
                     <strong>${p.name}</strong>
-                    <span class="program-type">${p.type}</span>
+                    <span class="program-type">${p.category}</span>
                     <p class="program-desc">${p.description}</p>
-                    <span class="program-age">Ages ${p.ageRange[0]}-${p.ageRange[1]}</span>
-                    <span class="program-schedule">${p.schedule}</span>
+                    <div class="program-contact">${p.contact}</div>
                 </label>
             </div>
         `).join('');

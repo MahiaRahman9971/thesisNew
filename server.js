@@ -171,18 +171,18 @@ app.post('/api/programs', async (req, res) => {
     const { zipCode } = req.body;
     try {
         const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with real data:
-{
-    "programs": [
-        {
-            "id": 1,
-            "name": "Program Name",
-            "category": "education/support/enrichment/etc",
-            "description": "Brief description of the program",
-            "contact": "Contact information"
-        }
-    ]
-}
-Return at least 3 programs with realistic data.`;
+    {
+        "programs": [
+            {
+                "id": 1,
+                "name": "Program Name",
+                "category": "education/support/enrichment/etc",
+                "description": "Brief description of the program",
+                "contact": "Contact information"
+            }
+        ]
+    }
+    Return at least 3 programs with realistic data.`;
         
         const response = await getOpenAIResponse(prompt);
         
