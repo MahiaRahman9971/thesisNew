@@ -142,11 +142,29 @@ app.post('/api/township', async (req, res) => {
         const prompt = `For zip code ${zipCode}, provide ONLY this exact JSON structure with real data:
 {
     "townshipName": "Name of the township/city",
-    "description": "A detailed description of the area, focusing on community aspects",
-    "websiteUrl": "Official township/city website URL"
-}`;
+    "description": [
+        "Key point about the community",
+        "Important fact about local services",
+        "Notable aspect of quality of life",
+        "Information about recreation or culture",
+        "Detail about economic or educational opportunities"
+    ],
+    "websiteUrl": "Official township/city website URL (must be a valid URL starting with http:// or https://)"
+}
+Ensure the description array contains 4-5 concise bullet points about the township.`;
         
         const response = await getOpenAIResponse(prompt);
+        
+        // Ensure description is an array
+        if (!Array.isArray(response.description)) {
+            response.description = [response.description];
+        }
+        
+        // Validate and format website URL
+        if (response.websiteUrl && !response.websiteUrl.startsWith('http')) {
+            response.websiteUrl = 'https://' + response.websiteUrl;
+        }
+        
         res.json(response);
     } catch (error) {
         console.error('Township API Error:', error);

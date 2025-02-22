@@ -2620,3 +2620,55 @@ svg {
     color: #7f8c8d;
     font-style: italic;
 }
+
+/* Township styles */
+.township-bullets {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.township-bullets li {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+/* School styles */
+.school-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.school-name {
+    font-size: 1.2em;
+    margin: 0;
+    flex: 1;
+}
+
+.school-rating {
+    font-size: 1.1em;
+    color: #ffd700;
+    white-space: nowrap;
+}
+
+.school-type {
+    color: #666;
+    margin: 5px 0;
+    font-style: italic;
+}
+
+.school-description {
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+.school-item {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}

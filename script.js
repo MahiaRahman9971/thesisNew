@@ -640,11 +640,29 @@ class StayAndImproveFlow {
         const townshipDescription = document.getElementById('township-description');
         const townshipWebsite = document.getElementById('township-website');
         
-        if (townshipName) townshipName.textContent = data.townshipName || 'Township information not available';
-        if (townshipDescription) townshipDescription.textContent = data.description || 'Description not available';
-        if (townshipWebsite) {
-            townshipWebsite.href = data.websiteUrl || '#';
-            townshipWebsite.textContent = data.websiteUrl ? 'Visit Township Website' : 'Website not available';
+        if (townshipName) {
+            townshipName.textContent = data.townshipName || 'Township information not available';
+        }
+        
+        if (townshipDescription) {
+            if (Array.isArray(data.description) && data.description.length > 0) {
+                const bulletPoints = data.description
+                    .map(point => `<li>${point}</li>`)
+                    .join('');
+                townshipDescription.innerHTML = `<ul class="township-bullets">${bulletPoints}</ul>`;
+            } else {
+                townshipDescription.textContent = 'Description not available';
+            }
+        }
+        
+        if (townshipWebsite && data.websiteUrl) {
+            townshipWebsite.href = data.websiteUrl;
+            townshipWebsite.textContent = 'Visit Township Website';
+            townshipWebsite.target = '_blank'; // Open in new tab
+            townshipWebsite.rel = 'noopener noreferrer'; // Security best practice
+        } else if (townshipWebsite) {
+            townshipWebsite.href = '#';
+            townshipWebsite.textContent = 'Website not available';
         }
     }
 
@@ -712,9 +730,12 @@ class StayAndImproveFlow {
             return;
         }
 
+        // Sort schools by rating (highest to lowest)
+        const sortedSchools = [...this.schoolsData].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+
         const filteredSchools = filter === 'all' ? 
-            this.schoolsData : 
-            this.schoolsData.filter(school => school.type === filter);
+            sortedSchools : 
+            sortedSchools.filter(school => school.type === filter);
 
         if (filteredSchools.length === 0) {
             schoolsList.innerHTML = '<p class="no-results">No schools found for the selected filter.</p>';
@@ -725,9 +746,11 @@ class StayAndImproveFlow {
             const schoolElement = document.createElement('div');
             schoolElement.className = 'school-item';
             schoolElement.innerHTML = `
-                <h6>${school.name || 'School Name Not Available'}</h6>
-                <div class="school-rating">
-                    ${this.generateStars(school.rating || 0)}
+                <div class="school-header">
+                    <h4 class="school-name">${school.name || 'School Name Not Available'}</h4>
+                    <div class="school-rating">
+                        ${this.generateStars(school.rating || 0)}
+                    </div>
                 </div>
                 <p class="school-type">${school.gradeLevel || school.type || 'Grade Level Not Available'}</p>
                 <p class="school-description">${school.description || 'No description available.'}</p>
