@@ -587,10 +587,13 @@ class StayAndImproveFlow {
         try {
             // Get zip code from local storage
             const quizData = JSON.parse(localStorage.getItem('personalizationQuiz') || '{}');
+            console.log('Quiz data from localStorage:', quizData); // Debug log
+            
             this.zipCode = quizData.zipCode || '';
+            console.log('Retrieved zip code:', this.zipCode); // Debug log
             
             if (!this.zipCode) {
-                throw new Error('Zip code not found');
+                throw new Error('Please complete the personalization quiz first to provide your zip code.');
             }
             
             // Fetch data in parallel
@@ -602,7 +605,7 @@ class StayAndImproveFlow {
             
         } catch (error) {
             console.error('Error in stay option flow:', error);
-            // Show error message to user
+            alert(error.message || 'An error occurred while loading your community information. Please try again.');
         } finally {
             loadingIndicator.classList.add('hidden');
         }
@@ -942,6 +945,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 'parent-phone': formData.get('parent-phone'),
                 'income': formData.get('income'),
                 'country': formData.get('country'),
+                'zipCode': formData.get('zipCode'), // Match the HTML form field name
                 
                 // Child Information (for first child)
                 'child1-name': formData.get('child1-name'),
@@ -950,8 +954,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 'child1-ethnicity': formData.get('child1-ethnicity')
             };
             
+            console.log('Form data being saved:', quizData); // Debug log
+            
             // Save to localStorage
             localStorage.setItem('personalizationQuiz', JSON.stringify(quizData));
+            
+            // Verify data was saved correctly
+            const savedData = JSON.parse(localStorage.getItem('personalizationQuiz'));
+            console.log('Data after saving:', savedData); // Debug log
             
             // Show success checkmark
             const checkmark = document.getElementById('submit-success');
