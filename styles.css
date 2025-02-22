@@ -1444,7 +1444,6 @@ svg {
 #selected-programs-list {
     list-style: none;
     padding: 0;
-    margin: 10px 0;
 }
 
 #selected-programs-list li {
@@ -1489,4 +1488,731 @@ svg {
     .programs-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Explore New Areas Flow Styles */
+.explore-flow-modal .modal-content {
+    max-width: 600px;
+    width: 90%;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.explore-flow-modal h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.8rem;
+}
+
+.explore-flow-modal .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.explore-flow-modal label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #34495e;
+    font-weight: 500;
+}
+
+.explore-flow-modal input[type="text"],
+.explore-flow-modal select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.explore-flow-modal input[type="text"]:focus,
+.explore-flow-modal select:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+.explore-flow-modal .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.explore-flow-modal button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.explore-flow-modal .back-btn {
+    background: #e0e0e0;
+    color: #2c3e50;
+}
+
+.explore-flow-modal .next-btn,
+.explore-flow-modal .close-modal {
+    background: #3498db;
+    color: white;
+}
+
+.explore-flow-modal .back-btn:hover {
+    background: #bdc3c7;
+}
+
+.explore-flow-modal .next-btn:hover,
+.explore-flow-modal .close-modal:hover {
+    background: #2980b9;
+}
+
+.explore-flow-modal .next-btn:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+}
+
+/* Neighborhood and School Lists */
+.neighborhood-list,
+.schools-list,
+.programs-list {
+    margin: 1.5rem 0;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.radio-option,
+.checkbox-option {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.radio-option:hover,
+.checkbox-option:hover {
+    background: #f7f9fc;
+}
+
+.radio-option input[type="radio"],
+.checkbox-option input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+/* Housing Options */
+.housing-links {
+    margin: 1.5rem 0;
+}
+
+.housing-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.housing-options a {
+    display: block;
+    padding: 1rem;
+    text-align: center;
+    background: #f7f9fc;
+    border-radius: 8px;
+    color: #2c3e50;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.housing-options a:hover {
+    background: #3498db;
+    color: white;
+}
+
+/* Demographics Summary */
+.demographics-summary {
+    margin-top: 1.5rem;
+}
+
+.stat-group {
+    margin-bottom: 2rem;
+}
+
+.stat-group h5 {
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.stat-group ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 0.5rem;
+}
+
+.stat-group li {
+    padding: 0.5rem;
+    background: #f7f9fc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* Helper Text */
+.helper-text {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    font-style: italic;
+}
+
+/* Opportunity Map Placeholder */
+#opportunity-map {
+    background: #f7f9fc;
+    padding: 2rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+#opportunity-map p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.back-btn,
+.next-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.back-btn {
+    background: #f1f1f1;
+    color: #333;
+}
+
+.next-btn {
+    background: #26B99A;
+    color: white;
+}
+
+.back-btn:hover {
+    background: #e1e1e1;
+}
+
+.next-btn:hover {
+    background: #219a82;
+}
+
+/* Flow Steps */
+.explore-flow-container {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.flow-step-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.flow-step-content h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.flow-step-content form {
+    margin-top: 2rem;
+}
+
+.flow-step-content .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.flow-step-content label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.flow-step-content input[type="text"],
+.flow-step-content select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.flow-step-content .radio-option,
+.flow-step-content .checkbox-option {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.flow-step-content .radio-option:hover,
+.flow-step-content .checkbox-option:hover {
+    background: #f8f9fa;
+}
+
+.flow-step-content .radio-option input,
+.flow-step-content .checkbox-option input {
+    margin-right: 0.5rem;
+}
+
+.flow-step-content .helper-text {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.flow-step-content .housing-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.flow-step-content .housing-options a {
+    display: block;
+    padding: 1rem;
+    text-align: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    color: #2c3e50;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.flow-step-content .housing-options a:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.button-group button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.button-group .back-btn {
+    background: #f1f1f1;
+    color: #333;
+}
+
+.button-group .next-btn,
+.button-group .finish-btn {
+    background: #26B99A;
+    color: white;
+}
+
+.button-group .back-btn:hover {
+    background: #e1e1e1;
+}
+
+.button-group .next-btn:hover,
+.button-group .finish-btn:hover {
+    background: #219a82;
+}
+
+.button-group .next-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+/* School Options */
+.school-type {
+    font-size: 0.9rem;
+    color: #666;
+    margin-left: 0.5rem;
+    font-style: italic;
+}
+
+.schools-list .radio-option {
+    display: flex;
+    align-items: center;
+}
+
+.schools-list .radio-option label {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.schools-list .radio-option:hover {
+    border-color: #26B99A;
+}
+
+.schools-list .radio-option input[type="radio"]:checked + label {
+    color: #26B99A;
+}
+
+/* Action Plan Summary */
+.action-plan-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.action-plan-content {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.summary-section {
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.summary-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.summary-section h3 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.summary-item {
+    background: #f8f9fa;
+    padding: 1.25rem;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+}
+
+.summary-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.summary-item strong {
+    display: block;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.summary-item span {
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.checklist {
+    display: grid;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.checklist-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+}
+
+.checklist-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    border: 2px solid #26B99A;
+    border-radius: 4px;
+}
+
+.checklist-item input[type="checkbox"]:checked + label {
+    text-decoration: line-through;
+    color: #26B99A;
+}
+
+.checklist-item label {
+    cursor: pointer;
+    font-size: 1rem;
+    color: #495057;
+    flex: 1;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: center;
+}
+
+.secondary-btn {
+    background: #e9ecef;
+    color: #495057;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.secondary-btn:hover {
+    background: #dee2e6;
+}
+
+/* Success Checkmark */
+.submit-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.success-checkmark {
+    width: 25px;
+    height: 25px;
+    position: relative;
+    display: none;
+    animation: scale-up 0.3s ease-in-out;
+}
+
+.success-checkmark.show {
+    display: inline-block;
+}
+
+.success-checkmark::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #26B99A;
+    opacity: 0;
+    animation: scale-up 0.3s ease-in-out forwards;
+}
+
+.success-checkmark::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 12px;
+    height: 8px;
+    border: 2px solid white;
+    border-top: none;
+    border-right: none;
+    transform-origin: center;
+    transform: translate(-50%, -65%) rotate(-45deg) scale(0);
+    animation: check 0.3s 0.3s ease-in-out forwards;
+}
+
+@keyframes scale-up {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes check {
+    0% {
+        transform: translate(-50%, -65%) rotate(-45deg) scale(0);
+    }
+    100% {
+        transform: translate(-50%, -65%) rotate(-45deg) scale(1);
+    }
+}
+
+/* Enhanced Radio and Checkbox Options */
+.radio-option, .checkbox-option {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.radio-option:hover, .checkbox-option:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+}
+
+.radio-option label, .checkbox-option label {
+    display: block;
+    cursor: pointer;
+}
+
+.neighborhood-desc, .school-desc, .program-desc {
+    margin: 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.walk-score, .school-rating, .program-type, .program-age, .program-schedule {
+    display: inline-block;
+    margin-right: 1rem;
+    padding: 0.25rem 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+.school-type {
+    color: #6c757d;
+    font-style: italic;
+    margin-left: 0.5rem;
+}
+
+.program-schedule {
+    color: #28a745;
+}
+
+/* Loading Animation */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-overlay.show {
+    display: flex;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-text {
+    position: absolute;
+    margin-top: 80px;
+    color: #007bff;
+    font-weight: 500;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* School Details */
+.school-details {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.school-rating, .school-distance {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+.school-type {
+    color: #0056b3;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.school-desc {
+    margin: 0.75rem 0;
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
 }

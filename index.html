@@ -199,7 +199,10 @@
                     </div>
 
                     <div class="form-actions">
-                        <button type="submit" class="submit-btn">Update Assessment</button>
+                        <div class="submit-wrapper">
+                            <button type="submit" class="submit-btn">Update Assessment</button>
+                            <div class="success-checkmark" id="submit-success"></div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -389,6 +392,94 @@
             </div>
         </section>
 
+        <section id="action-plan-summary" class="content-section" style="display: none;">
+            <div class="action-plan-container">
+                <h2>Finalized Action Plan</h2>
+                <p class="section-description">Here's a summary of your choices and next steps for your family's move.</p>
+
+                <div class="action-plan-content">
+                    <div id="child-info-section" class="summary-section">
+                        <h3 id="child-name-header">Child Information</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <strong>Name:</strong>
+                                <span id="summary-child-name">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Age:</strong>
+                                <span id="summary-child-age">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Gender:</strong>
+                                <span id="summary-child-gender">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Ethnicity:</strong>
+                                <span id="summary-child-ethnicity">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Country of Origin:</strong>
+                                <span id="summary-country">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="summary-section">
+                        <h3>Your Choices</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <strong>ZIP Code:</strong>
+                                <span id="summary-zipcode">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Neighborhood:</strong>
+                                <span id="summary-neighborhood">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Selected School:</strong>
+                                <span id="summary-school">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Community Programs:</strong>
+                                <span id="summary-programs">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="next-steps summary-section">
+                        <h3>Recommended Next Steps</h3>
+                        <div class="checklist">
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step1">
+                                <label for="step1">Schedule a visit to the selected school</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step2">
+                                <label for="step2">Research housing options in the chosen neighborhood</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step3">
+                                <label for="step3">Contact community programs for enrollment information</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step4">
+                                <label for="step4">Plan moving logistics and timeline</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step5">
+                                <label for="step5">Gather required documents for school enrollment</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="edit-choices" class="secondary-btn">Edit My Choices</button>
+                        <button id="download-summary" class="primary-btn">Download PDF Summary</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="section1" class="content-section">
             <!-- Section 1 content will go here -->
         </section>
@@ -415,5 +506,6 @@
     </main>
 
     <script src="scroll.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
