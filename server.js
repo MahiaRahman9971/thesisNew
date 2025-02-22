@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const OpenAI = require('openai');
 const path = require('path');
+const cors = require('cors');
 
 const app = express();
 const port = 3000;
@@ -11,6 +12,8 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
 
+// Middleware
+app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
@@ -113,6 +116,53 @@ app.post('/api/programs', async (req, res) => {
         const programs = JSON.parse(response);
         res.json(programs);
     } catch (error) {
+        res.status(500).json({ error: 'Error fetching program data' });
+    }
+});
+
+// Endpoint to get township information
+app.post('/api/township', async (req, res) => {
+    const { zipCode } = req.body;
+    try {
+        const prompt = `For zip code ${zipCode}, please provide the following information in JSON format:
+{
+    "townshipName": "Name of the township/city",
+    "description": "A detailed description of the area, focusing on community aspects",
+    "websiteUrl": "Official township/city website URL"
+}`;
+        
+        const response = await getOpenAIResponse(prompt);
+        const townshipInfo = JSON.parse(response);
+        res.json(townshipInfo);
+    } catch (error) {
+        console.error('Township API Error:', error);
+        res.status(500).json({ error: 'Error fetching township data' });
+    }
+});
+
+// Endpoint to get community programs
+app.post('/api/community-programs', async (req, res) => {
+    const { zipCode } = req.body;
+    try {
+        const prompt = `For zip code ${zipCode}, please provide information about community programs in JSON format:
+{
+    "programs": [
+        {
+            "id": "unique number",
+            "name": "program name",
+            "category": "education/enrichment/support",
+            "description": "program description",
+            "contact": "contact information"
+        }
+    ]
+}
+Please include at least 2 programs in each category (education, enrichment, support services).`;
+        
+        const response = await getOpenAIResponse(prompt);
+        const programs = JSON.parse(response);
+        res.json(programs);
+    } catch (error) {
+        console.error('Programs API Error:', error);
         res.status(500).json({ error: 'Error fetching program data' });
     }
 });

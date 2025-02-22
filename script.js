@@ -253,12 +253,12 @@ class ExploreNewAreasFlow {
 
         try {
             const [neighborhoods, schools, programs] = await Promise.all([
-                fetch('/api/neighborhoods', {
+                fetch('http://localhost:3000/api/neighborhoods', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ zipCode: this.data.zipCode })
                 }).then(res => res.json()),
-                fetch('/api/schools', {
+                fetch('http://localhost:3000/api/schools', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
@@ -266,7 +266,7 @@ class ExploreNewAreasFlow {
                         childAge: this.data.childAge 
                     })
                 }).then(res => res.json()),
-                fetch('/api/programs', {
+                fetch('http://localhost:3000/api/programs', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ zipCode: this.data.zipCode })
@@ -612,59 +612,81 @@ class StayAndImproveFlow {
     }
 
     async fetchTownshipInfo() {
-        const prompt = `For zip code ${this.zipCode}, please provide:
-            1. The township or municipality name
-            2. A brief description of the area
-            3. The official township website URL`;
-            
         try {
-            // Call OpenAI API (implementation needed)
-            const response = await this.callOpenAI(prompt);
+            const response = await fetch('http://localhost:3000/api/township', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ zipCode: this.zipCode })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch township info');
+            }
+
+            const data = await response.json();
             
             // Update UI
-            document.getElementById('township-name').textContent = response.townshipName;
-            document.getElementById('township-description').textContent = response.description;
-            document.getElementById('township-website').href = response.websiteUrl;
+            document.getElementById('township-name').textContent = data.townshipName;
+            document.getElementById('township-description').textContent = data.description;
+            document.getElementById('township-website').href = data.websiteUrl;
         } catch (error) {
             console.error('Error fetching township info:', error);
+            throw error;
         }
     }
 
     async fetchSchools() {
-        const prompt = `For zip code ${this.zipCode}, list nearby public schools with:
-            1. School name
-            2. Grade levels
-            3. Quality rating (1-5 stars) based on Stanford Education Data
-            4. Brief description of strengths/weaknesses`;
-            
         try {
-            // Call OpenAI API (implementation needed)
-            const response = await this.callOpenAI(prompt);
-            this.schoolsData = response.schools;
+            const response = await fetch('http://localhost:3000/api/schools', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    zipCode: this.zipCode,
+                    childAge: this.getChildAge()
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch schools');
+            }
+
+            const data = await response.json();
+            this.schoolsData = data;
             
-            // Render schools
+            // Render all schools initially
             this.renderSchools('all');
         } catch (error) {
             console.error('Error fetching schools:', error);
+            throw error;
         }
     }
 
     async fetchCommunityPrograms() {
-        const prompt = `For zip code ${this.zipCode}, suggest community programs in these categories:
-            1. Education (tutoring, mentoring, etc.)
-            2. Enrichment (arts, sports, etc.)
-            3. Support Services (counseling, resources, etc.)
-            Include program names, descriptions, and contact information.`;
-            
         try {
-            // Call OpenAI API (implementation needed)
-            const response = await this.callOpenAI(prompt);
-            this.programsData = response.programs;
+            const response = await fetch('http://localhost:3000/api/community-programs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ zipCode: this.zipCode })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch community programs');
+            }
+
+            const data = await response.json();
+            this.programsData = data.programs;
             
-            // Render programs
+            // Render all programs initially
             this.renderPrograms('all');
         } catch (error) {
-            console.error('Error fetching programs:', error);
+            console.error('Error fetching community programs:', error);
+            throw error;
         }
     }
 
@@ -795,39 +817,10 @@ class StayAndImproveFlow {
         return Array(5).fill('').map((_, i) => i < rating ? fullStar : emptyStar).join('');
     }
 
-    async callOpenAI(prompt) {
-        // Implementation needed - this should make the actual API call to OpenAI
-        // Return mock data for now
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve({
-                    townshipName: 'Sample Township',
-                    description: 'A vibrant community with excellent schools and parks.',
-                    websiteUrl: 'https://www.sampletown.gov',
-                    schools: [
-                        {
-                            id: 1,
-                            name: 'Washington Elementary',
-                            type: 'elementary',
-                            gradeLevel: 'K-5',
-                            rating: 4,
-                            description: 'Strong STEM program with experienced teachers.'
-                        },
-                        // Add more mock schools...
-                    ],
-                    programs: [
-                        {
-                            id: 1,
-                            name: 'After-School Tutoring',
-                            category: 'education',
-                            description: 'Free tutoring services for K-12 students.',
-                            contact: 'education@sampletown.org'
-                        },
-                        // Add more mock programs...
-                    ]
-                });
-            }, 1000);
-        });
+    // Helper method to get child age from quiz data
+    getChildAge() {
+        const quizData = JSON.parse(localStorage.getItem('personalizationQuiz') || '{}');
+        return parseInt(quizData['child1-age']) || 10; // Default to 10 if not found
     }
 }
 
