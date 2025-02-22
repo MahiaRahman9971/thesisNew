@@ -22,11 +22,31 @@ async function getOpenAIResponse(prompt) {
     try {
         const completion = await openai.chat.completions.create({
             model: "gpt-4",
-            messages: [{ role: "user", content: prompt }],
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a JSON API that returns structured data about townships, schools, and community programs. Always respond with valid JSON data only, no conversation or explanations."
+                },
+                { 
+                    role: "user",
+                    content: prompt 
+                }
+            ],
             temperature: 0.7,
             max_tokens: 1000
         });
-        return completion.choices[0].message.content;
+        const content = completion.choices[0].message.content;
+        // Ensure we have valid JSON
+        try {
+            return JSON.parse(content);
+        } catch (error) {
+            console.error('Invalid JSON from OpenAI:', content);
+            // Return a default structure if the response is invalid
+            return {
+                error: "Invalid response format",
+                message: "Please try again"
+            };
+        }
     } catch (error) {
         console.error('OpenAI API Error:', error);
         throw error;
@@ -42,7 +62,7 @@ app.post('/api/neighborhoods', async (req, res) => {
             Format the response as valid JSON. Only return the JSON array, no other text.`;
         
         const response = await getOpenAIResponse(prompt);
-        const neighborhoods = JSON.parse(response);
+        const neighborhoods = response;
         res.json(neighborhoods);
     } catch (error) {
         res.status(500).json({ error: 'Error fetching neighborhood data' });
@@ -65,41 +85,36 @@ app.post('/api/schools', async (req, res) => {
             schoolLevel = 'high';
         }
 
-        const prompt = `
-        Given ZIP code ${zipCode} and a child age of ${childAge} (${schoolLevel} school level), provide a JSON array of 5 relevant ${schoolLevel} schools in or very close to this ZIP code.
-
-        Follow these strict school type rules:
-        - Preschool: Ages 3-4
-        - Elementary School: Ages 5-10
-        - Middle School: Ages 11-13
-        - High School: Ages 14-18
-
-        The child is ${childAge} years old, so ONLY return ${schoolLevel} schools.
-
-        For each school, use the following JSON structure:
+        const prompt = `For zip code ${zipCode}, provide ONLY this exact JSON structure with real data for ${schoolLevel} schools:
+{
+    "schools": [
         {
-        "name": "School Name",
-        "type": "${schoolLevel}",
-        "gradeRange": "specific grades (e.g., K-5 for elementary)",
-        "rating": 1-10,
-        "description": "2-3 sentences about the school's features",
-        "distance": "distance in miles from ZIP code"
+            "id": 1,
+            "name": "School Name",
+            "type": "${schoolLevel}",
+            "gradeLevel": "specific grades (e.g., K-5 for elementary)",
+            "rating": 4,
+            "description": "Brief description of strengths/weaknesses"
         }
-
-        Distance Rules:
-        - If the school is in the exact same ZIP code, the distance must be less than 1 mile.
-        - If the school is nearby (e.g., a neighboring ZIP code or within a few miles), provide a realistic mileage (e.g., 1 to 5 miles).
-        - Do not show large distances for schools allegedly in the same ZIP code.
-
-        Return ONLY a valid JSON array with no extra text or explanation.
-        `;
+    ]
+}
+Return at least 3 schools. The rating should be a number between 1 and 5.`;
         
         const response = await getOpenAIResponse(prompt);
-        const schools = JSON.parse(response);
-        res.json(schools);
+        
+        // Ensure we have the correct data structure
+        if (!response.schools || !Array.isArray(response.schools)) {
+            console.error('Invalid schools data structure:', response);
+            response.schools = [];
+        }
+        
+        res.json(response);
     } catch (error) {
         console.error('School API Error:', error);
-        res.status(500).json({ error: 'Error fetching school data' });
+        res.status(500).json({ 
+            error: 'Error fetching school data',
+            schools: [] 
+        });
     }
 });
 
@@ -113,7 +128,7 @@ app.post('/api/programs', async (req, res) => {
             Format the response as valid JSON. Only return the JSON array, no other text.`;
         
         const response = await getOpenAIResponse(prompt);
-        const programs = JSON.parse(response);
+        const programs = response;
         res.json(programs);
     } catch (error) {
         res.status(500).json({ error: 'Error fetching program data' });
@@ -124,7 +139,7 @@ app.post('/api/programs', async (req, res) => {
 app.post('/api/township', async (req, res) => {
     const { zipCode } = req.body;
     try {
-        const prompt = `For zip code ${zipCode}, please provide the following information in JSON format:
+        const prompt = `For zip code ${zipCode}, provide ONLY this exact JSON structure with real data:
 {
     "townshipName": "Name of the township/city",
     "description": "A detailed description of the area, focusing on community aspects",
@@ -132,8 +147,7 @@ app.post('/api/township', async (req, res) => {
 }`;
         
         const response = await getOpenAIResponse(prompt);
-        const townshipInfo = JSON.parse(response);
-        res.json(townshipInfo);
+        res.json(response);
     } catch (error) {
         console.error('Township API Error:', error);
         res.status(500).json({ error: 'Error fetching township data' });
@@ -144,23 +158,21 @@ app.post('/api/township', async (req, res) => {
 app.post('/api/community-programs', async (req, res) => {
     const { zipCode } = req.body;
     try {
-        const prompt = `For zip code ${zipCode}, please provide information about community programs in JSON format:
+        const prompt = `For zip code ${zipCode}, provide ONLY this exact JSON structure with real data:
 {
     "programs": [
         {
-            "id": "unique number",
-            "name": "program name",
+            "id": 1,
+            "name": "Program Name",
             "category": "education/enrichment/support",
-            "description": "program description",
-            "contact": "contact information"
+            "description": "Program description",
+            "contact": "Contact information"
         }
     ]
-}
-Please include at least 2 programs in each category (education, enrichment, support services).`;
+}`;
         
         const response = await getOpenAIResponse(prompt);
-        const programs = JSON.parse(response);
-        res.json(programs);
+        res.json(response);
     } catch (error) {
         console.error('Programs API Error:', error);
         res.status(500).json({ error: 'Error fetching program data' });

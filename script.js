@@ -628,12 +628,23 @@ class StayAndImproveFlow {
             const data = await response.json();
             
             // Update UI
-            document.getElementById('township-name').textContent = data.townshipName;
-            document.getElementById('township-description').textContent = data.description;
-            document.getElementById('township-website').href = data.websiteUrl;
+            this.renderTownshipInfo(data);
         } catch (error) {
             console.error('Error fetching township info:', error);
             throw error;
+        }
+    }
+
+    renderTownshipInfo(data) {
+        const townshipName = document.getElementById('township-name');
+        const townshipDescription = document.getElementById('township-description');
+        const townshipWebsite = document.getElementById('township-website');
+        
+        if (townshipName) townshipName.textContent = data.townshipName || 'Township information not available';
+        if (townshipDescription) townshipDescription.textContent = data.description || 'Description not available';
+        if (townshipWebsite) {
+            townshipWebsite.href = data.websiteUrl || '#';
+            townshipWebsite.textContent = data.websiteUrl ? 'Visit Township Website' : 'Website not available';
         }
     }
 
@@ -655,7 +666,7 @@ class StayAndImproveFlow {
             }
 
             const data = await response.json();
-            this.schoolsData = data;
+            this.schoolsData = data.schools || [];
             
             // Render all schools initially
             this.renderSchools('all');
@@ -692,22 +703,34 @@ class StayAndImproveFlow {
 
     renderSchools(filter) {
         const schoolsList = document.getElementById('schools-list');
+        if (!schoolsList) return;
+        
         schoolsList.innerHTML = '';
         
-        const filteredSchools = filter === 'all' 
-            ? this.schoolsData 
-            : this.schoolsData.filter(school => school.type === filter);
-            
+        if (!Array.isArray(this.schoolsData)) {
+            console.error('Schools data is not an array:', this.schoolsData);
+            return;
+        }
+
+        const filteredSchools = filter === 'all' ? 
+            this.schoolsData : 
+            this.schoolsData.filter(school => school.type === filter);
+
+        if (filteredSchools.length === 0) {
+            schoolsList.innerHTML = '<p class="no-results">No schools found for the selected filter.</p>';
+            return;
+        }
+
         filteredSchools.forEach(school => {
             const schoolElement = document.createElement('div');
             schoolElement.className = 'school-item';
             schoolElement.innerHTML = `
-                <h6>${school.name}</h6>
+                <h6>${school.name || 'School Name Not Available'}</h6>
                 <div class="school-rating">
-                    ${this.generateStars(school.rating)}
+                    ${this.generateStars(school.rating || 0)}
                 </div>
-                <p class="school-type">${school.gradeLevel}</p>
-                <p class="school-description">${school.description}</p>
+                <p class="school-type">${school.gradeLevel || school.type || 'Grade Level Not Available'}</p>
+                <p class="school-description">${school.description || 'No description available.'}</p>
             `;
             schoolsList.appendChild(schoolElement);
         });
