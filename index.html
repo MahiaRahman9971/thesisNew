@@ -8,8 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://unpkg.com/topojson-client@3"></script>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
     <script src="script.js" defer></script>
     <script src="mapVis.js" defer></script>
 </head>
@@ -212,67 +212,11 @@
             <div class="opportunity-container">
                 <h2>Opportunity Map</h2>
                 <p class="section-description">Explore economic mobility across different regions</p>
-                
-                <div class="opportunity-content">
-                    <div class="map-side">
-                        <div id="zip-map"></div>
-                        <div class="map-controls">
-                            <button class="map-toggle active" data-view="commuting">Commuting Zones</button>
-                            <button class="map-toggle" data-view="census">Census Tracts</button>
-                        </div>
-                    </div>
-                    
-                    <div class="scores-side">
-                        <div class="score-card">
-                            <h3>Opportunity Score</h3>
-                            <div class="total-score">
-                                <span id="total-score">--</span>
-                                <span class="out-of">out of 100</span>
-                            </div>
-                            
-                            <div class="score-breakdown">
-                                <h4>Score Breakdown</h4>
-                                <div class="score-item">
-                                    <div class="score-label">Segregation</div>
-                                    <div class="score-bar-container">
-                                        <div class="score-bar" id="segregation-score" style="width: 0%"></div>
-                                        <span class="score-value">--</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="score-item">
-                                    <div class="score-label">Income Inequality</div>
-                                    <div class="score-bar-container">
-                                        <div class="score-bar" id="inequality-score" style="width: 0%"></div>
-                                        <span class="score-value">--</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="score-item">
-                                    <div class="score-label">School Quality</div>
-                                    <div class="score-bar-container">
-                                        <div class="score-bar" id="school-score" style="width: 0%"></div>
-                                        <span class="score-value">--</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="score-item">
-                                    <div class="score-label">Family Structure</div>
-                                    <div class="score-bar-container">
-                                        <div class="score-bar" id="family-score" style="width: 0%"></div>
-                                        <span class="score-value">--</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="score-item">
-                                    <div class="score-label">Social Capital</div>
-                                    <div class="score-bar-container">
-                                        <div class="score-bar" id="social-score" style="width: 0%"></div>
-                                        <span class="score-value">--</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="map-wrapper">
+                    <div id="map"></div>
+                    <div class="view-mode-controls">
+                        <button class="active" onclick="setViewMode('commuting-zones')">Commuting Zones</button>
+                        <button onclick="setViewMode('census-tracts')">Census Tracts</button>
                     </div>
                 </div>
             </div>
@@ -503,9 +447,10 @@
         <section id="section6" class="content-section">
             <!-- Section 6 content will go here -->
         </section>
+
     </main>
 
     <script src="scroll.js"></script>
-    <script src="script.js"></script>
+    <script src="map.js"></script>
 </body>
 </html>
