@@ -336,7 +336,6 @@ class ExploreNewAreasFlow {
                     <h5>${n.name}</h5>
                     <p class="neighborhood-desc">${n.description}</p>
                     <div class="neighborhood-stats">
-                        <span class="walk-score">Walk Score: ${n.walkScore}</span>
                     </div>
                 </label>
             </div>
@@ -349,17 +348,18 @@ class ExploreNewAreasFlow {
         }
 
         return this.cachedData.schools.map(s => `
-            <div class="radio-option">
+            <div class="school-card">
                 <input type="radio" name="school" value="${s.name}" id="${s.name}" required>
-                <label for="${s.name}">
-                    <strong>${s.name}</strong>
-                    <span class="school-type">(${s.type} - ${s.gradeRange})</span>
-                    <p class="school-desc">${s.description}</p>
-                    <div class="school-details">
-                        <span class="school-rating">Rating: ${s.rating}/10</span>
-                        <span class="school-distance">${s.distance} from ${this.data.zipCode}</span>
-                    </div>
-                </label>
+                <div class="school-info">
+                    <h3 class="school-name">${s.name}</h3>
+                    <div class="school-type">(elementary, K-5)</div>
+                    <p class="school-description">${s.description}</p>
+                </div>
+                <div class="school-rating">
+                    <span class="rating-label">Rating</span>
+                    <span class="rating-value">${s.rating}/10</span>
+                    <div class="school-distance">${s.distance} miles from ${this.data.zipCode}</div>
+                </div>
             </div>
         `).join('');
     }
