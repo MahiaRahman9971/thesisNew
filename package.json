@@ -2,7 +2,7 @@
   "name": "economic-mobility-guide",
   "version": "1.0.0",
   "description": "A guide to help families make informed decisions about economic mobility",
-  "main": "server.js",
+  "main": "api/index.js",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -10,7 +10,8 @@
     "openai": "^4.85.3"
   },
   "scripts": {
-    "start": "node server.js"
+    "start": "node api/index.js",
+    "vercel-build": "echo 'Build step completed'"
   },
   "repository": {
     "type": "git",
