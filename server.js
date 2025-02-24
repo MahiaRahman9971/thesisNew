@@ -9,7 +9,8 @@ const port = 3000;
 
 // Initialize OpenAI
 const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
+    apiKey: process.env.OPENAI_API_KEY,
+    baseURL: 'https://api.openai.com/v1'
 });
 
 // Middleware
@@ -21,25 +22,39 @@ app.use(express.static(path.join(__dirname)));
 async function getOpenAIResponse(prompt) {
     try {
         const response = await openai.chat.completions.create({
-            model: 'gpt-4o',
-            messages: [{ role: 'user', content: prompt }],
-            temperature: 0.7,
+            model: 'gpt-4',
+            messages: [
+                {
+                    role: 'system',
+                    content: 'You are a JSON API. Always respond with valid JSON data only. Never include explanations or markdown formatting.'
+                },
+                {
+                    role: 'user',
+                    content: prompt
+                }
+            ],
+            temperature: 0.3,
         });
 
         const content = response.choices[0].message.content;
         
-        // Remove markdown code block syntax if present
-        const jsonStr = content.replace(/```json\n|\n```/g, '');
-        
         try {
-            return JSON.parse(jsonStr);
+            return JSON.parse(content);
         } catch (parseError) {
-            console.error('Failed to parse OpenAI response:', jsonStr);
-            return { error: 'Invalid response format', message: 'Please try again' };
+            console.error('Failed to parse OpenAI response:', content);
+            return { 
+                error: true, 
+                message: 'Failed to parse response',
+                details: content.substring(0, 200)
+            };
         }
     } catch (error) {
         console.error('OpenAI API Error:', error);
-        return { error: 'API error', message: error.message };
+        return { 
+            error: true, 
+            message: 'API error', 
+            details: error.message 
+        };
     }
 }
 
@@ -274,6 +289,34 @@ app.post('/api/community-programs', async (req, res) => {
     } catch (error) {
         console.error('Programs API Error:', error);
         res.status(500).json({ error: 'Error fetching program data' });
+    }
+});
+
+// Endpoint to save selected programs
+app.post('/api/save-programs', async (req, res) => {
+    const { zipCode, selectedPrograms } = req.body;
+    
+    if (!Array.isArray(selectedPrograms)) {
+        return res.status(400).json({ 
+            error: 'Invalid data format',
+            message: 'Selected programs must be an array'
+        });
+    }
+
+    try {
+        // Here you would typically save to a database
+        // For now, we'll just send a success response
+        res.json({ 
+            success: true,
+            message: 'Programs saved successfully',
+            savedPrograms: selectedPrograms
+        });
+    } catch (error) {
+        console.error('Error saving programs:', error);
+        res.status(500).json({ 
+            error: 'Failed to save programs',
+            message: error.message
+        });
     }
 });
 

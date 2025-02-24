@@ -556,7 +556,7 @@ class StayAndImproveFlow {
         this.schoolsData = [];
         this.programsData = [];
         
-        // Bind event handlers
+        // Bind methods to this
         this.handleStayOptionClick = this.handleStayOptionClick.bind(this);
         this.handleProgramSelection = this.handleProgramSelection.bind(this);
         this.handleSavePrograms = this.handleSavePrograms.bind(this);
@@ -566,10 +566,34 @@ class StayAndImproveFlow {
     }
 
     initializeEventListeners() {
-        document.getElementById('stay-action-btn').addEventListener('click', this.handleStayOptionClick);
+        const stayActionBtn = document.getElementById('stay-action-btn');
+        if (stayActionBtn) {
+            stayActionBtn.addEventListener('click', this.handleStayOptionClick);
+        }
         
-        // Save programs button
-        document.getElementById('save-programs-btn').addEventListener('click', this.handleSavePrograms);
+        const saveProgramsBtn = document.getElementById('save-programs-btn');
+        if (saveProgramsBtn) {
+            saveProgramsBtn.addEventListener('click', this.handleSavePrograms);
+        }
+
+        // Add global click handler for program selection
+        document.addEventListener('click', (e) => {
+            // Handle program selection buttons
+            if (e.target.matches('.select-program-btn')) {
+                const programId = e.target.dataset.programId;
+                if (programId) {
+                    this.handleProgramSelection(programId);
+                }
+            }
+            
+            // Handle remove buttons in selected programs list
+            if (e.target.matches('.remove-program-btn')) {
+                const programId = e.target.dataset.programId;
+                if (programId) {
+                    this.handleProgramSelection(programId);
+                }
+            }
+        });
     }
 
     async handleStayOptionClick() {
@@ -748,17 +772,17 @@ class StayAndImproveFlow {
 
         sortedSchools.forEach(school => {
             const schoolElement = document.createElement('div');
-            schoolElement.className = 'school-item';
+            schoolElement.className = 'school-card';
+            
             schoolElement.innerHTML = `
                 <div class="school-header">
-                    <h4 class="school-name">${school.name || 'School Name Not Available'}</h4>
-                    <div class="school-rating">
-                        ${this.generateStars(school.rating || 0)}
-                    </div>
+                    <h4 class="school-name">${school.name}</h4>
+                    <div class="school-rating">${this.generateStars(school.rating)}</div>
                 </div>
-                <p class="school-type">${school.gradeLevel || school.type || 'Grade Level Not Available'}</p>
-                <p class="school-description">${school.description || 'No description available.'}</p>
+                <div class="school-score">${school.score || 'N/A'}</div>
+                <p class="school-description">${school.description || 'No description available'}</p>
             `;
+            
             schoolsList.appendChild(schoolElement);
         });
     }
@@ -769,97 +793,114 @@ class StayAndImproveFlow {
         
         programsList.innerHTML = '';
         
-        // Ensure programsData is always an array
-        if (!Array.isArray(this.programsData)) {
-            console.error('Programs data is not an array:', this.programsData);
-            this.programsData = [];
-        }
-
         if (this.programsData.length === 0) {
-            programsList.innerHTML = '<p class="no-results">No programs found in your area.</p>';
+            programsList.innerHTML = '<p class="no-results">No programs found.</p>';
             return;
         }
 
         this.programsData.forEach(program => {
             const programElement = document.createElement('div');
-            programElement.className = 'program-item';
+            programElement.className = 'program-card';
+            programElement.dataset.programId = program.id;
+            
+            const isSelected = this.selectedPrograms.has(program.id);
+            
             programElement.innerHTML = `
                 <div class="program-header">
-                    <h4 class="program-name">${program.name || 'Program Name Not Available'}</h4>
-                    <span class="program-category">${program.category || 'Category Not Available'}</span>
+                    <h4 class="program-title">${program.name}</h4>
+                    <span class="program-tag">${program.category || 'General'}</span>
                 </div>
-                <p class="program-description">${program.description || 'No description available.'}</p>
-                <p class="program-contact">${program.contact || 'Contact information not available.'}</p>
-                <button class="select-program-btn ${this.selectedPrograms.has(program.id) ? 'selected' : ''}" data-id="${program.id}">
-                    ${this.selectedPrograms.has(program.id) ? '✓ Selected' : 'Select Program'}
+                <p class="program-description">${program.description || 'No description available'}</p>
+                <div class="program-contact">${program.contact || 'Contact information not available'}</div>
+                <button class="select-program-btn ${isSelected ? 'selected' : ''}" data-program-id="${program.id}">
+                    ${isSelected ? 'Selected' : 'Select Program'}
                 </button>
             `;
             
-            // Add event listener to the select button
-            const selectBtn = programElement.querySelector('.select-program-btn');
-            if (selectBtn) {
-                selectBtn.addEventListener('click', () => this.handleProgramSelection(program.id));
-            }
-            
             programsList.appendChild(programElement);
         });
-        
+
         this.updateSelectedProgramsList();
     }
 
     handleProgramSelection(programId) {
+        if (!programId) return;
+        
+        console.log('Handling program selection:', programId); // Debug log
+
         if (this.selectedPrograms.has(programId)) {
             this.selectedPrograms.delete(programId);
         } else {
             this.selectedPrograms.add(programId);
         }
-        this.renderPrograms(); // Re-render to update button states
+
+        console.log('Selected programs:', Array.from(this.selectedPrograms)); // Debug log
+
+        // Update all buttons with this program ID
+        const buttons = document.querySelectorAll(`[data-program-id="${programId}"]`);
+        const isSelected = this.selectedPrograms.has(programId);
+        
+        buttons.forEach(button => {
+            if (button.classList.contains('select-program-btn')) {
+                button.textContent = isSelected ? 'Selected' : 'Select Program';
+                button.classList.toggle('selected', isSelected);
+            }
+        });
+
+        this.updateSelectedProgramsList();
     }
 
     updateSelectedProgramsList() {
         const selectedList = document.getElementById('selected-programs-list');
+        if (!selectedList) return;
+        
         selectedList.innerHTML = '';
         
-        const selectedProgramsData = this.programsData.filter(p => this.selectedPrograms.has(p.id));
-        
-        if (selectedProgramsData.length === 0) {
-            selectedList.innerHTML = '<p class="no-selections">No programs selected</p>';
+        if (this.selectedPrograms.size === 0) {
+            selectedList.innerHTML = '<p class="no-results">No programs selected</p>';
             return;
         }
-        
-        selectedProgramsData.forEach(program => {
-            const item = document.createElement('div');
-            item.className = 'selected-program-item';
-            item.innerHTML = `
-                <span>${program.name}</span>
-                <button class="remove-program-btn" data-id="${program.id}">×</button>
+
+        const selectedProgramsArray = Array.from(this.selectedPrograms)
+            .map(id => this.programsData.find(p => p.id === id))
+            .filter(Boolean);
+
+        selectedProgramsArray.forEach(program => {
+            const programElement = document.createElement('div');
+            programElement.className = 'selected-program-item';
+            programElement.innerHTML = `
+                <span class="program-name">${program.name}</span>
+                <button class="remove-program-btn" data-program-id="${program.id}">
+                    Remove
+                </button>
             `;
-            
-            item.querySelector('.remove-program-btn').addEventListener('click', () => {
-                this.selectedPrograms.delete(program.id);
-                this.renderPrograms();
-            });
-            
-            selectedList.appendChild(item);
+            selectedList.appendChild(programElement);
         });
     }
 
-    handleSavePrograms() {
-        // Get selected programs data
-        const selectedProgramsData = this.programsData
-            .filter(program => this.selectedPrograms.has(program.id));
+    async handleSavePrograms() {
+        try {
+            const response = await fetch('http://localhost:3000/api/save-programs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    zipCode: this.zipCode,
+                    selectedPrograms: Array.from(this.selectedPrograms)
+                })
+            });
 
-        // Save to local storage
-        localStorage.setItem('selectedPrograms', JSON.stringify(selectedProgramsData));
+            if (!response.ok) {
+                throw new Error('Failed to save programs');
+            }
 
-        // Show success message
-        const messageElement = document.getElementById('save-success-message');
-        if (messageElement) {
-            messageElement.textContent = 'Programs saved successfully!';
-            messageElement.style.display = 'block';
-            setTimeout(() => {
-                messageElement.style.display = 'none';
-            }, 3000);
+            // Show success message
+            alert('Your program selections have been saved successfully!');
+            
+        } catch (error) {
+            console.error('Error saving programs:', error);
+            alert('There was an error saving your program selections. Please try again.');
         }
     }
 

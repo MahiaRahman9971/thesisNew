@@ -1,6 +1,6 @@
 /* Base styles */
 :root {
-    --primary-color: #30b4a4;
+    --primary-color: #6CD9CA;
     --secondary-color: #9dbda9;
     --accent-color-1: #9b252f;
     --accent-color-2: #b65441;
@@ -16,6 +16,7 @@
     --text-color: #333333;
     --background-color: #ffffff;
     --section-padding: 4rem 2rem;
+    --font-family: 'Nunito', sans-serif;
 }
 
 * {
@@ -25,11 +26,22 @@
 }
 
 body {
-    font-family: 'Nunito', 'Arial', sans-serif;
+    font-family: var(--font-family);
     line-height: 1.6;
     color: var(--text-color);
     background-color: var(--background-color);
     min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6,
+.nav-link,
+.logo,
+.button,
+input,
+select,
+textarea,
+button {
+    font-family: 'Nunito', sans-serif;
 }
 
 /* Navigation */
@@ -110,7 +122,7 @@ main {
 }
 
 .content h1 {
-    color: #26B99A;
+    color: #6CD9CA;
     font-size: 2.5em;
     margin-bottom: 15px;
 }
@@ -156,7 +168,7 @@ main {
 }
 
 .discover-box li {
-    color: #26B99A;
+    color: #6CD9CA;
     margin: 10px 0;
     font-size: 0.9em;
     line-height: 1.4;
@@ -288,84 +300,123 @@ main {
 }
 
 .welcome-section {
+    min-height: 100vh;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 60px 40px;
-    background-color: #fff;
-    margin-bottom: 40px;
+    justify-content: center;
+    padding: 2rem;
+    background: white;
 }
 
 .welcome-content {
-    max-width: 900px;
-    margin: 0 auto;
+    max-width: 800px;
     text-align: center;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    animation: fadeInUp 0.8s ease-out;
 }
 
 .welcome-content h1 {
-    color: #26B99A;
-    font-size: 3.5em;
-    margin-bottom: 25px;
+    font-size: 3.5rem;
+    color: #2EC4B6;
+    margin-bottom: 1.5rem;
+    line-height: 1.2;
     font-weight: 800;
 }
 
 .subtitle {
-    font-size: 1.8em;
-    color: #333;
-    margin-bottom: 30px;
+    font-size: 1.5rem;
+    color: #666;
+    margin-bottom: 2rem;
     font-weight: 600;
 }
 
 .welcome-description {
-    font-size: 1.3em;
-    line-height: 1.6;
+    font-size: 1.2rem;
     color: #555;
-    margin-bottom: 40px;
-    padding: 0 20px;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
 }
 
 .key-points {
-    background-color: #f8f9fa;
-    padding: 30px;
-    border-radius: 12px;
-    margin: 30px auto;
-    max-width: 800px;
-}
-
-.key-points p {
-    font-size: 1.5em;
-    color: #333;
-    margin-bottom: 20px;
-    font-weight: 600;
+    margin: 2.5rem 0;
 }
 
 .key-points ul {
     list-style: none;
     padding: 0;
-    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .key-points li {
-    color: #26B99A;
-    margin: 15px 0;
-    font-size: 1.3em;
-    line-height: 1.5;
+    font-size: 1.2rem;
+    color: #444;
+    padding: 1rem 2rem;
+    background: rgba(46, 196, 182, 0.05);
+    border-radius: 12px;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.key-points li:hover {
+    transform: translateY(-2px);
+    background: rgba(46, 196, 182, 0.1);
 }
 
 .encouragement {
-    font-size: 1.4em;
-    color: #26B99A;
-    margin-top: 40px;
+    font-size: 1.4rem;
+    color: #2EC4B6;
     font-weight: 600;
+    margin-top: 2.5rem;
 }
 
-.fade-in {
-    animation: fadeIn 1.5s ease-in;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
+/* Make it responsive */
+@media (max-width: 768px) {
+    .welcome-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .welcome-description {
+        font-size: 1.1rem;
+    }
+    
+    .key-points li {
+        font-size: 1.1rem;
+        padding: 0.8rem 1.5rem;
+    }
+    
+    .encouragement {
+        font-size: 1.1rem;
+    }
+    
+    .opportunity-factors {
+        grid-template-columns: 1fr;
+    }
+    
+    .path-to-success {
+        grid-template-columns: 1fr;
+    }
+    
+    .map-explanation {
+        padding: 1rem;
+    }
 }
 
 /* Map Section */
@@ -438,10 +489,18 @@ svg {
 }
 
 .learn-section h1 {
-    color: #26B99A;
-    font-size: 2.5em;
+    font-size: 2.8rem;
+    color: #2EC4B6;
+    margin-bottom: 1.5rem;
     text-align: center;
-    margin-bottom: 30px;
+}
+
+.learn-section .map-title {
+    font-size: 1.8rem;
+    color: #444;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 600;
 }
 
 /* Map animation */
@@ -518,7 +577,7 @@ svg {
 }
 
 .learn-more-btn {
-    background: #26B99A;
+    background: #6CD9CA;
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -529,7 +588,7 @@ svg {
 }
 
 .learn-more-btn:hover {
-    background: #26B99A;
+    background: #6CD9CA;
 }
 
 @media (max-width: 768px) {
@@ -567,7 +626,7 @@ svg {
 .step-number {
     width: 40px;
     height: 40px;
-    background: #26B99A;
+    background: #6CD9CA;
     color: white;
     border-radius: 50%;
     display: flex;
@@ -587,7 +646,7 @@ svg {
 }
 
 .primary-btn {
-    background: #26B99A;
+    background: #6CD9CA;
     color: white;
     border: none;
     padding: 1rem 2rem;
@@ -599,7 +658,7 @@ svg {
 }
 
 .primary-btn:hover {
-    background: #26B99A;
+    background: #6CD9CA;
 }
 
 /* Responsive Design */
@@ -680,7 +739,7 @@ svg {
     color: #2c3e50;
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #26B99A;
+    border-bottom: 2px solid #6CD9CA;
 }
 
 .parent-fields {
@@ -713,7 +772,7 @@ svg {
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #26B99A;
+    border-color: #6CD9CA;
 }
 
 .form-actions {
@@ -723,7 +782,7 @@ svg {
 }
 
 .submit-btn {
-    background: #26B99A;
+    background: #6CD9CA;
     color: white;
     border: none;
     padding: 0.8rem 1.5rem;
@@ -736,7 +795,7 @@ svg {
 }
 
 .submit-btn:hover {
-    background-color: #2a9f91;
+    background-color: #6CD9CA;
 }
 
 .submit-btn:disabled {
@@ -860,8 +919,8 @@ svg {
 
 .map-toggle {
     background: white;
-    border: 2px solid #26B99A;
-    color: #26B99A;
+    border: 2px solid #6CD9CA;
+    color: #6CD9CA;
     padding: 0.5rem 1rem;
     border-radius: 20px;
     cursor: pointer;
@@ -870,7 +929,7 @@ svg {
 }
 
 .map-toggle.active {
-    background: #26B99A;
+    background: #6CD9CA;
     color: white;
 }
 
@@ -895,7 +954,7 @@ svg {
 .total-score {
     font-size: 3rem;
     font-weight: 700;
-    color: #26B99A;
+    color: #6CD9CA;
     text-align: center;
     margin: 1.5rem 0;
 }
@@ -935,7 +994,7 @@ svg {
 
 .score-bar {
     height: 100%;
-    background: #26B99A;
+    background: #6CD9CA;
     width: 0;
     transition: width 1s ease-in-out;
 }
@@ -1006,7 +1065,7 @@ svg {
 
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #26B99A;
+    border-color: #6CD9CA;
     outline: none;
     box-shadow: 0 0 0 2px rgba(38, 185, 154, 0.1);
 }
@@ -1014,7 +1073,7 @@ svg {
 #assess-btn {
     width: 100%;
     padding: 1rem;
-    background: #26B99A;
+    background: #6CD9CA;
     color: white;
     border: none;
     border-radius: 5px;
@@ -1025,7 +1084,7 @@ svg {
 }
 
 #assess-btn:hover {
-    background: #1e9c82;
+    background: #6CD9CA;
 }
 
 /* Map Controls */
@@ -1048,9 +1107,9 @@ svg {
 }
 
 .map-controls button.active {
-    background: #26B99A;
+    background: #6CD9CA;
     color: white;
-    border-color: #26B99A;
+    border-color: #6CD9CA;
 }
 
 /* Results Section */
@@ -1122,14 +1181,14 @@ svg {
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    background: #26B99A;
+    background: #6CD9CA;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 1.5rem auto;
     color: white;
     position: relative;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'Nunito', sans-serif;
 }
 
 #community-score {
@@ -1165,28 +1224,23 @@ svg {
 }
 
 #improvement-list li {
-    position: relative;
-    padding: 0.75rem 0 0.75rem 2rem;
+    padding: 5px 0;
     color: #555;
-    font-size: 1.1rem;
 }
 
-#improvement-list li::before {
-    content: "!";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    background: #ff6b6b;
+.confirm-btn {
+    width: 100%;
+    padding: 12px;
+    background: #6CD9CA;
     color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 0.9rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.confirm-btn:hover {
+    background: #6CD9CA;
 }
 
 .take-action-container h2 {
@@ -1233,7 +1287,7 @@ svg {
 }
 
 .action-card h4 {
-    background: #26B99A;
+    background: #6CD9CA;
     color: white;
     margin: 0;
     padding: 1rem;
@@ -1267,7 +1321,7 @@ svg {
     content: "→";
     position: absolute;
     left: 0;
-    color: #26B99A;
+    color: #6CD9CA;
 }
 
 .action-btn {
@@ -1281,21 +1335,21 @@ svg {
 }
 
 .stay-btn {
-    background: #26B99A;
+    background: #6CD9CA;
     color: white;
 }
 
 .stay-btn:hover {
-    background: #219a82;
+    background: #6CD9CA;
 }
 
 .move-btn {
-    background: #3498db;
+    background: #6CD9CA;
     color: white;
 }
 
 .move-btn:hover {
-    background: #2980b9;
+    background: #6CD9CA;
 }
 
 /* Stay & Improve Detailed View */
@@ -1335,9 +1389,9 @@ svg {
 }
 
 .filter-btn.active {
-    background: #007bff;
+    background: #6CD9CA;
     color: white;
-    border-color: #0056b3;
+    border-color: #6CD9CA;
 }
 
 .schools-list {
@@ -1361,8 +1415,8 @@ svg {
 }
 
 .school-card.selected {
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px #007bff;
+    border-color: #6CD9CA;
+    box-shadow: 0 0 0 2px #6CD9CA;
 }
 
 .school-header {
@@ -1413,8 +1467,8 @@ svg {
 }
 
 .program-card.selected {
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px #007bff;
+    border-color: #6CD9CA;
+    box-shadow: 0 0 0 2px #6CD9CA;
 }
 
 .program-name {
@@ -1450,7 +1504,7 @@ svg {
 .confirm-btn {
     width: 100%;
     padding: 12px;
-    background: #28a745;
+    background: #6CD9CA;
     color: white;
     border: none;
     border-radius: 4px;
@@ -1459,7 +1513,7 @@ svg {
 }
 
 .confirm-btn:hover {
-    background: #218838;
+    background: #6CD9CA;
 }
 
 @media (max-width: 768px) {
@@ -1525,7 +1579,7 @@ svg {
 
 .explore-flow-modal input[type="text"]:focus,
 .explore-flow-modal select:focus {
-    border-color: #3498db;
+    border-color: #6CD9CA;
     outline: none;
 }
 
@@ -1551,7 +1605,7 @@ svg {
 
 .explore-flow-modal .next-btn,
 .explore-flow-modal .close-modal {
-    background: #3498db;
+    background: #6CD9CA;
     color: white;
 }
 
@@ -1561,7 +1615,7 @@ svg {
 
 .explore-flow-modal .next-btn:hover,
 .explore-flow-modal .close-modal:hover {
-    background: #2980b9;
+    background: #6CD9CA;
 }
 
 .explore-flow-modal .next-btn:disabled {
@@ -1590,7 +1644,7 @@ svg {
 
 .radio-option:hover,
 .checkbox-option:hover {
-    border-color: #007bff;
+    border-color: #6CD9CA;
     box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
 }
 
@@ -1630,7 +1684,7 @@ svg {
 }
 
 .program-schedule {
-    color: #28a745;
+    color: #6CD9CA;
 }
 
 /* Demographics Summary */
@@ -1737,7 +1791,7 @@ svg {
 }
 
 .next-btn {
-    background: #26B99A;
+    background: #6CD9CA;
     color: white;
 }
 
@@ -1746,7 +1800,7 @@ svg {
 }
 
 .next-btn:hover {
-    background: #219a82;
+    background: #6CD9CA;
 }
 
 /* Flow Steps */
@@ -1865,7 +1919,7 @@ svg {
 
 .button-group .next-btn,
 .button-group .finish-btn {
-    background: #26B99A;
+    background: #6CD9CA;
     color: white;
 }
 
@@ -1875,7 +1929,7 @@ svg {
 
 .button-group .next-btn:hover,
 .button-group .finish-btn:hover {
-    background: #219a82;
+    background: #6CD9CA;
 }
 
 .button-group .next-btn:disabled {
@@ -1903,11 +1957,11 @@ svg {
 }
 
 .schools-list .radio-option:hover {
-    border-color: #26B99A;
+    border-color: #6CD9CA;
 }
 
 .schools-list .radio-option input[type="radio"]:checked + label {
-    color: #26B99A;
+    color: #6CD9CA;
 }
 
 /* Action Plan Summary */
@@ -2002,13 +2056,13 @@ svg {
     width: 20px;
     height: 20px;
     cursor: pointer;
-    border: 2px solid #26B99A;
+    border: 2px solid #6CD9CA;
     border-radius: 4px;
 }
 
 .checklist-item input[type="checkbox"]:checked + label {
     text-decoration: line-through;
-    color: #26B99A;
+    color: #6CD9CA;
 }
 
 .checklist-item label {
@@ -2065,7 +2119,7 @@ svg {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background: #26B99A;
+    background: #6CD9CA;
     opacity: 0;
     animation: scale-up 0.3s ease-in-out forwards;
 }
@@ -2108,7 +2162,7 @@ svg {
 
 .radio-option:hover,
 .checkbox-option:hover {
-    border-color: #007bff;
+    border-color: #6CD9CA;
     box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
 }
 
@@ -2148,7 +2202,7 @@ svg {
 }
 
 .program-schedule {
-    color: #28a745;
+    color: #6CD9CA;
 }
 
 /* Loading Animation */
@@ -2173,7 +2227,7 @@ svg {
     width: 50px;
     height: 50px;
     border: 5px solid #f3f3f3;
-    border-top: 5px solid #007bff;
+    border-top: 5px solid #6CD9CA;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -2181,7 +2235,7 @@ svg {
 .loading-text {
     position: absolute;
     margin-top: 80px;
-    color: #007bff;
+    color: #6CD9CA;
     font-weight: 500;
 }
 
@@ -2208,7 +2262,7 @@ svg {
 }
 
 .school-type {
-    color: #0056b3;
+    color: #6CD9CA;
     font-weight: 500;
     margin-left: 0.5rem;
 }
@@ -2302,7 +2356,7 @@ svg {
 /* Highlight when selected */
 .neighborhood-selection input[type="radio"]:checked + label {
     background-color: #e3f2fd;
-    border-color: #2196f3;
+    border-color: #6CD9CA;
     border-radius: 8px;
     padding: 1rem;
     display: block;
@@ -2344,7 +2398,7 @@ svg {
     background: #f1f8ff;
     border-radius: 4px;
     font-size: 0.85rem;
-    color: #0366d6;
+    color: #6CD9CA;
 }
 
 /* Custom scrollbar for the neighborhood list */
@@ -2449,7 +2503,7 @@ svg {
     width: 40px;
     height: 40px;
     border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
+    border-top: 4px solid #6CD9CA;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 0 auto 1rem;
@@ -2493,7 +2547,7 @@ svg {
 .township-link {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #6CD9CA;
     color: white !important;
     text-decoration: none;
     border-radius: 4px;
@@ -2558,7 +2612,7 @@ svg {
 .township-link {
     display: inline-block;
     padding: 8px 16px;
-    background-color: #007bff;
+    background-color: #6CD9CA;
     color: white;
     text-decoration: none;
     border-radius: 4px;
@@ -2673,4 +2727,399 @@ svg {
     font-style: italic;
     padding: 2rem;
     grid-column: 1 / -1;
+}
+
+#learn-section h1 {
+    font-size: 2.8rem;
+    color: #2EC4B6;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+#learn-section .map-title {
+    font-size: 1.8rem;
+    color: #444;
+    margin-bottom: 2rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* Arlington Section Styles */
+.location-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin: 2rem 0;
+    transition: transform 0.3s ease;
+}
+
+.location-card:hover {
+    transform: translateY(-5px);
+}
+
+.location-card h2 {
+    color: #2EC4B6;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.location-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.location-features li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.location-features li:before {
+    content: "✓";
+    color: #2EC4B6;
+    margin-right: 1rem;
+    font-weight: bold;
+}
+
+.visit-township {
+    display: inline-block;
+    background: #2EC4B6;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    margin-top: 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.visit-township:hover {
+    background: #28B0A2;
+}
+
+/* Nearby Schools Section */
+.schools-section {
+    margin-top: 3rem;
+}
+
+.schools-section h3 {
+    color: #2c3e50;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+}
+
+.school-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.school-card:hover {
+    transform: translateY(-3px);
+}
+
+.school-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.school-name {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.school-rating {
+    color: #f1c40f;
+    font-size: 1.2rem;
+}
+
+.school-score {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    margin: 0.5rem 0;
+}
+
+/* Community Programs Section */
+.programs-section {
+    margin-top: 3rem;
+}
+
+.program-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #2EC4B6;
+}
+
+.program-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.program-title {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.program-tag {
+    background: #f0f7f6;
+    color: #2EC4B6;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.select-program-btn {
+    display: inline-block;
+    background: #f5f6fa;
+    color: #2c3e50;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-top: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+}
+
+.select-program-btn:hover {
+    background: #2EC4B6;
+    color: white;
+}
+
+.select-program-btn.selected {
+    background: #2EC4B6;
+    color: white;
+}
+
+.select-program-btn.selected:hover {
+    background: #28B0A2;
+}
+
+/* Selected Programs Section */
+.selected-programs {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.selected-programs h4 {
+    color: #2c3e50;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.selected-program-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.selected-program-item:last-child {
+    margin-bottom: 0;
+}
+
+.program-name {
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.remove-program-btn {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s ease;
+}
+
+.remove-program-btn:hover {
+    background: #ff5252;
+}
+
+#save-programs-btn {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 2rem auto 0;
+    padding: 1rem;
+    background: #2EC4B6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+#save-programs-btn:hover {
+    background: #28B0A2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(46, 196, 182, 0.2);
+}
+
+#save-programs-btn:active {
+    transform: translateY(0);
+}
+
+.no-results {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+    padding: 1.5rem;
+}
+
+/* Township Info Styles */
+.township-info {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin: 2rem 0;
+}
+
+.township-info h3 {
+    color: #2EC4B6;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.township-info #township-description ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.township-info #township-description ul li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.township-info #township-description ul li:before {
+    content: "✓";
+    color: #2EC4B6;
+    margin-right: 1rem;
+    font-weight: bold;
+}
+
+#township-website-container {
+    margin-top: 1.5rem;
+}
+
+#township-website a {
+    display: inline-block;
+    background: #2EC4B6;
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+#township-website a:hover {
+    background: #28B0A2;
+}
+
+/* Program Selection Styles */
+.select-program-btn {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f5f6fa;
+    color: #2c3e50;
+}
+
+.select-program-btn:hover {
+    background: #2EC4B6;
+    color: white;
+}
+
+.select-program-btn.selected {
+    background: #2EC4B6;
+    color: white;
+}
+
+.select-program-btn.selected:hover {
+    background: #28B0A2;
+}
+
+/* Selected Programs List Styles */
+.selected-program-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.selected-program-item:hover {
+    transform: translateY(-2px);
+}
+
+.selected-program-item .program-name {
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.remove-program-btn {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.remove-program-btn:hover {
+    background: #ff5252;
+    transform: translateY(-1px);
+}
+
+.remove-program-btn:active {
+    transform: translateY(0);
 }
