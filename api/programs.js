@@ -41,59 +41,43 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with realistic community programs data:
-        {
+        // Return mock data
+        const mockData = {
             "programs": [
                 {
                     "id": "1",
-                    "name": "After School Learning Center",
+                    "name": "Cambridge After School Learning Center",
                     "description": "Academic support and enrichment activities for K-12 students",
                     "type": "education",
                     "ageRange": "5-18",
-                    "location": "Local Community Center",
+                    "location": "Cambridge Community Center",
                     "contact": {
                         "phone": "(555) 123-4567",
-                        "email": "info@aslc.org",
-                        "website": "www.aslc.org"
+                        "email": "info@caslc.org",
+                        "website": "www.caslc.org"
+                    }
+                },
+                {
+                    "id": "2",
+                    "name": "Youth Sports League",
+                    "description": "Organized sports programs for children and teens",
+                    "type": "sports",
+                    "ageRange": "6-16",
+                    "location": "Cambridge Sports Complex",
+                    "contact": {
+                        "phone": "(555) 234-5678",
+                        "email": "info@youthsports.org",
+                        "website": "www.youthsports.org"
                     }
                 }
             ]
-        }`;
+        };
 
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-4',
-            messages: [
-                {
-                    role: 'system',
-                    content: 'You are a JSON API. Always respond with valid JSON data only. Never include explanations or markdown formatting.'
-                },
-                {
-                    role: 'user',
-                    content: prompt
-                }
-            ],
-            temperature: 0.3
-        });
-
-        const content = completion.choices[0].message.content;
-        
-        try {
-            const data = JSON.parse(content);
-            if (!data || !data.programs) {
-                throw new Error('Invalid response format from AI');
-            }
-            res.json(data);
-        } catch (parseError) {
-            console.error('Failed to parse OpenAI response:', content);
-            res.status(500).json({ 
-                error: 'Failed to parse programs data',
-                details: parseError.message 
-            });
-        }
+        res.json(mockData);
     } catch (error) {
-        console.error('Error fetching community programs:', error);
+        console.error('Error:', error);
         res.status(500).json({ 
-            error: 'Failed to fetch community programs',
+            error: 'Failed to fetch programs',
             details: error.message 
         });
     }

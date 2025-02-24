@@ -35,12 +35,12 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with realistic township/neighborhood data:
-        {
+        // Return mock data
+        const mockData = {
             "township": {
-                "name": "Sample Township",
-                "population": 50000,
-                "medianIncome": 75000,
+                "name": "Cambridge Township",
+                "population": 120000,
+                "medianIncome": 95000,
                 "demographics": {
                     "white": 45,
                     "black": 25,
@@ -48,45 +48,30 @@ module.exports = async (req, res) => {
                     "asian": 10
                 },
                 "education": {
-                    "highSchoolOrHigher": 90,
-                    "bachelorOrHigher": 45
+                    "highSchoolOrHigher": 95,
+                    "bachelorOrHigher": 75
                 },
                 "amenities": {
-                    "parks": 5,
-                    "libraries": 2,
+                    "parks": 8,
+                    "libraries": 3,
                     "communityCenter": true,
                     "publicTransport": true
-                }
-            }
-        }`;
-
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-4',
-            messages: [
-                {
-                    role: 'system',
-                    content: 'You are a JSON API. Always respond with valid JSON data only.'
                 },
-                {
-                    role: 'user',
-                    content: prompt
-                }
-            ],
-            temperature: 0.3
-        });
+                "description": [
+                    "Vibrant university town with rich cultural diversity",
+                    "Strong focus on education and innovation",
+                    "Active community events and programs",
+                    "Excellent public transportation system"
+                ],
+                "websiteUrl": "www.cambridgema.gov"
+            }
+        };
 
-        const content = completion.choices[0].message.content;
-        const data = JSON.parse(content);
-
-        if (!data || !data.township) {
-            throw new Error('Invalid response format from AI');
-        }
-
-        res.json(data);
+        res.json(mockData);
     } catch (error) {
-        console.error('Error fetching township data:', error);
+        console.error('Error:', error);
         res.status(500).json({ 
-            error: 'Failed to fetch township data',
+            error: 'Failed to fetch township info',
             details: error.message 
         });
     }

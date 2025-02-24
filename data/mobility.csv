@@ -1,0 +1,3 @@
+state,county,mobility_score,opportunity_index
+MA,Middlesex,0.85,80
+MA,Suffolk,0.75,70

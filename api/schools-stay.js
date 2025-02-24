@@ -35,16 +35,16 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with realistic school data:
-        {
+        // Return mock data
+        const mockData = {
             "schools": [
                 {
                     "id": "1",
-                    "name": "Sample Elementary School",
+                    "name": "Cambridge Elementary School",
                     "type": "Public",
                     "grades": "K-5",
                     "rating": 8,
-                    "address": "123 School St",
+                    "address": "123 School St, Cambridge, MA",
                     "distance": "0.5 miles",
                     "demographics": {
                         "totalStudents": 500,
@@ -73,31 +73,9 @@ module.exports = async (req, res) => {
                     }
                 }
             ]
-        }`;
+        };
 
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-4',
-            messages: [
-                {
-                    role: 'system',
-                    content: 'You are a JSON API. Always respond with valid JSON data only.'
-                },
-                {
-                    role: 'user',
-                    content: prompt
-                }
-            ],
-            temperature: 0.3
-        });
-
-        const content = completion.choices[0].message.content;
-        const data = JSON.parse(content);
-        
-        if (!data || !data.schools) {
-            throw new Error('Invalid response format from AI');
-        }
-
-        res.json(data);
+        res.json(mockData);
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ 

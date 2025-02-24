@@ -1,17 +1,14 @@
 {
-  "name": "economic-mobility-guide",
+  "name": "thesis-website",
   "version": "1.0.0",
-  "description": "A guide to help families make informed decisions about economic mobility",
-  "main": "api/index.js",
+  "description": "Thesis project website",
+  "scripts": {
+    "vercel-build": "echo 'Build step completed'"
+  },
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^4.21.2",
-    "openai": "^4.85.3"
-  },
-  "scripts": {
-    "start": "node api/index.js",
-    "vercel-build": "echo 'Build step completed'"
+    "dotenv": "^16.0.3",
+    "openai": "^4.0.0"
   },
   "repository": {
     "type": "git",
