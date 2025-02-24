@@ -184,48 +184,42 @@ app.post('/api/schools-move', async (req, res) => {
 // Endpoint to get community programs
 app.post('/api/programs', async (req, res) => {
     const { zipCode } = req.body;
-    try {
-        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with real data:
-    {
-        "programs": [
-            {
-                "id": 1,
-                "name": "Program Name",
-                "category": "education/support/enrichment/etc",
-                "description": "Brief description of the program",
-                "contact": "Contact information"
-            }
-        ]
+    if (!zipCode) {
+        return res.status(400).json({ error: 'ZIP code is required' });
     }
-    Return at least 3 programs with realistic data.`;
+
+    try {
+        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with realistic community programs data:
+        {
+            "programs": [
+                {
+                    "id": "1",
+                    "name": "After School Learning Center",
+                    "description": "Academic support and enrichment activities for K-12 students",
+                    "type": "education",
+                    "ageRange": "5-18",
+                    "location": "Local Community Center",
+                    "contact": {
+                        "phone": "(555) 123-4567",
+                        "email": "info@aslc.org",
+                        "website": "www.aslc.org"
+                    }
+                }
+            ]
+        }`;
+
+        const data = await getOpenAIResponse(prompt);
         
-        const response = await getOpenAIResponse(prompt);
-        
-        // Ensure we have the correct data structure
-        if (!response || !response.programs || !Array.isArray(response.programs)) {
-            console.error('Invalid programs data structure:', response);
-            res.status(500).json({ 
-                error: 'Invalid data structure received',
-                programs: [] 
-            });
-            return;
+        if (!data || !data.programs) {
+            throw new Error('Invalid response format from AI');
         }
 
-        // Validate each program object
-        const validatedPrograms = response.programs.map(program => ({
-            id: program.id || Math.floor(Math.random() * 1000),
-            name: program.name || 'Unnamed Program',
-            category: program.category || 'general',
-            description: program.description || 'No description available',
-            contact: program.contact || 'Contact information not available'
-        }));
-        
-        res.json({ programs: validatedPrograms });
+        res.json(data);
     } catch (error) {
-        console.error('Programs API Error:', error);
+        console.error('Error fetching community programs:', error);
         res.status(500).json({ 
-            error: 'Error fetching program data',
-            programs: [] 
+            error: 'Failed to fetch community programs',
+            details: error.message 
         });
     }
 });

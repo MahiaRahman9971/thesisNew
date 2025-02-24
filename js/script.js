@@ -375,17 +375,30 @@ class ExploreNewAreasFlow {
             return '<p>No programs found in this area.</p>';
         }
 
-        return programs.map(p => `
+        const programsHTML = programs.map(program => `
             <div class="checkbox-option">
-                <input type="checkbox" name="program" value="${p.name}" id="${p.name}">
-                <label for="${p.name}">
-                    <strong>${p.name}</strong>
-                    <span class="program-type">${p.category}</span>
-                    <p class="program-desc">${p.description}</p>
-                    <div class="program-contact">${p.contact}</div>
+                <input type="checkbox" name="program" value="${program.id}" id="${program.id}">
+                <label for="${program.id}">
+                    <strong>${program.name}</strong>
+                    <span class="program-type">${program.type}</span>
+                    <p class="program-desc">${program.description}</p>
+                    <div class="program-details">
+                        <p><strong>Age Range:</strong> ${program.ageRange}</p>
+                        <p><strong>Location:</strong> ${program.location}</p>
+                        <div class="program-contact">
+                            <p><strong>Contact:</strong></p>
+                            <ul>
+                                <li>Phone: ${program.contact.phone}</li>
+                                <li>Email: ${program.contact.email}</li>
+                                <li>Website: <a href="${program.contact.website}" target="_blank">${program.contact.website}</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </label>
             </div>
         `).join('');
+
+        return programsHTML;
     }
 
     navigateStep(direction) {
@@ -695,14 +708,20 @@ class StayAndImproveFlow {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to fetch community programs');
             }
 
             const data = await response.json();
-            return data;
+            if (!data || !data.programs) {
+                throw new Error('Invalid program data received');
+            }
+
+            this.programsData = data.programs;
+            this.renderPrograms();
         } catch (error) {
             console.error('Error fetching community programs:', error);
-            throw new Error('Failed to fetch community programs');
+            throw error;
         }
     }
 
@@ -872,39 +891,43 @@ class StayAndImproveFlow {
     }
 
     renderPrograms() {
-        const programsList = document.getElementById('programs-list');
-        if (!programsList) return;
-        
-        programsList.innerHTML = '';
-        
-        if (this.programsData.length === 0) {
-            programsList.innerHTML = '<p class="no-results">No programs found.</p>';
+        const programsContainer = document.getElementById('programs-container');
+        if (!programsContainer) {
+            console.error('Programs container not found');
             return;
         }
 
-        this.programsData.forEach(program => {
-            const programElement = document.createElement('div');
-            programElement.className = 'program-card';
-            programElement.dataset.programId = program.id;
-            
-            const isSelected = this.selectedPrograms.has(program.id);
-            
-            programElement.innerHTML = `
-                <div class="program-header">
-                    <h4 class="program-title">${program.name}</h4>
-                    <span class="program-tag">${program.category || 'General'}</span>
-                </div>
-                <p class="program-description">${program.description || 'No description available'}</p>
-                <div class="program-contact">${program.contact || 'Contact information not available'}</div>
-                <button class="select-program-btn ${isSelected ? 'selected' : ''}" data-program-id="${program.id}">
-                    ${isSelected ? 'Selected' : 'Select Program'}
-                </button>
-            `;
-            
-            programsList.appendChild(programElement);
-        });
+        if (!this.programsData || !this.programsData.length) {
+            programsContainer.innerHTML = '<p class="text-center">No programs found for your area.</p>';
+            return;
+        }
 
-        this.updateSelectedProgramsList();
+        const programsHTML = this.programsData.map(program => `
+            <div class="program-card" data-program-id="${program.id}">
+                <div class="program-header">
+                    <h3>${program.name}</h3>
+                    <span class="program-type">${program.type}</span>
+                </div>
+                <p class="program-description">${program.description}</p>
+                <div class="program-details">
+                    <p><strong>Age Range:</strong> ${program.ageRange}</p>
+                    <p><strong>Location:</strong> ${program.location}</p>
+                    <div class="program-contact">
+                        <p><strong>Contact:</strong></p>
+                        <ul>
+                            <li>Phone: ${program.contact.phone}</li>
+                            <li>Email: ${program.contact.email}</li>
+                            <li>Website: <a href="${program.contact.website}" target="_blank">${program.contact.website}</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <button class="select-program-btn" data-program-id="${program.id}">
+                    ${this.selectedPrograms.has(program.id) ? 'Selected' : 'Select Program'}
+                </button>
+            </div>
+        `).join('');
+
+        programsContainer.innerHTML = programsHTML;
     }
 }
 

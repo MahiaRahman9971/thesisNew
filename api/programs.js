@@ -28,25 +28,26 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with real data:
+        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with realistic community programs data:
         {
             "programs": [
                 {
-                    "name": "string",
-                    "organization": "string",
-                    "description": "string",
-                    "eligibility": "string",
+                    "id": "1",
+                    "name": "After School Learning Center",
+                    "description": "Academic support and enrichment activities for K-12 students",
+                    "type": "education",
+                    "ageRange": "5-18",
+                    "location": "Local Community Center",
                     "contact": {
-                        "phone": "string",
-                        "email": "string",
-                        "website": "string"
-                    },
-                    "location": "string"
+                        "phone": "(555) 123-4567",
+                        "email": "info@aslc.org",
+                        "website": "www.aslc.org"
+                    }
                 }
             ]
         }`;
 
-        const response = await openai.chat.completions.create({
+        const completion = await openai.chat.completions.create({
             model: 'gpt-4',
             messages: [
                 {
@@ -58,27 +59,29 @@ module.exports = async (req, res) => {
                     content: prompt
                 }
             ],
-            temperature: 0.3,
+            temperature: 0.3
         });
 
-        const content = response.choices[0].message.content;
+        const content = completion.choices[0].message.content;
         
         try {
-            const jsonData = JSON.parse(content);
-            res.status(200).json(jsonData);
+            const data = JSON.parse(content);
+            if (!data || !data.programs) {
+                throw new Error('Invalid response format from AI');
+            }
+            res.json(data);
         } catch (parseError) {
             console.error('Failed to parse OpenAI response:', content);
             res.status(500).json({ 
-                error: true, 
-                message: 'Failed to parse response',
-                details: content.substring(0, 200)
+                error: 'Failed to parse programs data',
+                details: parseError.message 
             });
         }
     } catch (error) {
-        console.error('OpenAI API error:', error);
-        res.status(500).json({
-            error: true,
-            message: error.message
+        console.error('Error fetching community programs:', error);
+        res.status(500).json({ 
+            error: 'Failed to fetch community programs',
+            details: error.message 
         });
     }
 };
