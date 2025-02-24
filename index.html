@@ -335,38 +335,26 @@
                     </div>
                 </div>
 
-                <div id="stay-improve-details" class="stay-improve-details hidden">
-                    <div class="loading-indicator hidden">
-                        <div class="spinner"></div>
-                        <p>Analyzing your community...</p>
-                    </div>
-
-                    <div class="details-grid">
+                <div id="stay-improve-details" class="content-section hidden">
+                    <div class="stay-improve-container">
+                        <h2>Your Community Details</h2>
+                        <div class="loading-indicator hidden">Loading...</div>
+                        
                         <div class="township-info">
-                            <h3 id="township-name"></h3>
+                            <h3>Township Information</h3>
+                            <div id="township-name"></div>
                             <div id="township-description"></div>
-                            <div id="township-website-container">
-                                <div id="township-website"></div>
-                            </div>
+                            <div id="township-website"></div>
                         </div>
 
-                        <div class="schools-section">
-                            <h3>Nearby Schools</h3>
-                            <div class="schools-list" id="schools-list">
-                                <!-- Schools will be dynamically added here -->
-                            </div>
+                        <div class="schools-info">
+                            <h3>Local Schools</h3>
+                            <div id="schools-list"></div>
                         </div>
 
-                        <div class="programs-section">
+                        <div class="programs-info">
                             <h3>Community Programs</h3>
-                            <div class="programs-list" id="programs-list">
-                                <!-- Programs will be dynamically added here -->
-                            </div>
-                            <div class="selected-programs">
-                                <h4>Selected Programs</h4>
-                                <div id="selected-programs-list"></div>
-                            </div>
-                            <button class="select-program-btn" id="save-programs-btn">Update Assessment</button>
+                            <div id="programs-container"></div>
                         </div>
                     </div>
                 </div>

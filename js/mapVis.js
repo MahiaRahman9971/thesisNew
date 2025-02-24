@@ -167,19 +167,18 @@ let opportunityData = {};
 let currentView = 'commuting';
 let userDetails = {};
 
-// Load initial data
-let promises = [
-    d3.csv("../data/mobility_counties.csv"),
-    d3.json("../data/counties-10m.json"),
-    d3.json("../data/states-10m.json"),
-    d3.json("../data/us-commuting-zones.json"),
-    // Load commuting zones opportunity data
-    d3.csv("../data/commuting_zones_opp/cz_kfr_rW_gM_p25.csv"),
-    d3.csv("../data/commuting_zones_opp/cz_kfr_rW_gF_p25.csv"),
-    d3.csv("../data/commuting_zones_opp/cz_kfr_rB_gM_p25.csv"),
-    d3.csv("../data/commuting_zones_opp/cz_kfr_rB_gF_p25.csv"),
-    d3.csv("../data/commuting_zones_opp/cz_kfr_rH_gM_p25.csv"),
-    d3.csv("../data/commuting_zones_opp/cz_kfr_rH_gF_p25.csv")
+// Load data
+const promises = [
+    d3.csv("data/mobility.csv"),
+    d3.json("data/us.json"),
+    d3.json("data/states.json"),
+    d3.csv("data/commuting_zones.csv"),
+    d3.csv("data/white_male_opp.csv"),
+    d3.csv("data/white_female_opp.csv"),
+    d3.csv("data/black_male_opp.csv"),
+    d3.csv("data/black_female_opp.csv"),
+    d3.csv("data/hispanic_male_opp.csv"),
+    d3.csv("data/hispanic_female_opp.csv")
 ];
 
 Promise.all(promises)

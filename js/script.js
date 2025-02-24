@@ -62,10 +62,9 @@ class ExploreNewAreasFlow {
             'B': 'Black',
             'H': 'Hispanic',
             'A': 'Asian',
-            'NA': 'Native American'
+            'O': 'Other'
         };
-        console.log('Mapping ethnicity code:', code, 'to:', ethnicityMap[code]);
-        return ethnicityMap[code] || code || '--';
+        return ethnicityMap[code] || 'Unknown';
     }
 
     async startFlow() {
