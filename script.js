@@ -250,12 +250,12 @@ class ExploreNewAreasFlow {
 
         try {
             const [neighborhoods, schools, programsResponse] = await Promise.all([
-                fetch('http://localhost:3000/api/neighborhoods', {
+                fetch('/api/neighborhoods', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ zipCode: this.data.zipCode })
                 }).then(res => res.json()),
-                fetch('http://localhost:3000/api/schools-move', {
+                fetch('/api/schools-move', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
@@ -263,7 +263,7 @@ class ExploreNewAreasFlow {
                         childAge: this.data.childAge 
                     })
                 }).then(res => res.json()),
-                fetch('http://localhost:3000/api/programs', {
+                fetch('/api/programs', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ zipCode: this.data.zipCode })
@@ -636,7 +636,7 @@ class StayAndImproveFlow {
 
     async fetchTownshipInfo() {
         try {
-            const response = await fetch('http://localhost:3000/api/township', {
+            const response = await fetch('/api/township', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -696,7 +696,7 @@ class StayAndImproveFlow {
 
     async fetchSchools() {
         try {
-            const response = await fetch('http://localhost:3000/api/schools-stay', {
+            const response = await fetch('/api/schools-stay', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -724,7 +724,7 @@ class StayAndImproveFlow {
 
     async fetchCommunityPrograms() {
         try {
-            const response = await fetch('http://localhost:3000/api/programs', {
+            const response = await fetch('/api/programs', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -880,7 +880,7 @@ class StayAndImproveFlow {
 
     async handleSavePrograms() {
         try {
-            const response = await fetch('http://localhost:3000/api/save-programs', {
+            const response = await fetch('/api/save-programs', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
