@@ -2,8 +2,24 @@
     "version": 2,
     "routes": [
         {
-            "src": "/api/(.*)",
-            "dest": "/api"
+            "src": "/api/programs",
+            "dest": "/api/programs.js"
+        },
+        {
+            "src": "/api/schools-stay",
+            "dest": "/api/schools-stay.js"
+        },
+        {
+            "src": "/api/township",
+            "dest": "/api/township.js"
+        },
+        {
+            "src": "/api/neighborhoods",
+            "dest": "/api/neighborhoods.js"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/$1"
         }
     ]
 }

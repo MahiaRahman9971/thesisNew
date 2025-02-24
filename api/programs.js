@@ -1,10 +1,15 @@
 require('dotenv').config();
 const OpenAI = require('openai');
+const express = require('express');
 
 // Initialize OpenAI
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
+
+const app = express();
+
+app.use(express.json());
 
 module.exports = async (req, res) => {
     // Enable CORS
@@ -22,7 +27,15 @@ module.exports = async (req, res) => {
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
-    const { zipCode } = req.body;
+    // Parse request body
+    let body;
+    try {
+        body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    } catch (error) {
+        return res.status(400).json({ error: 'Invalid JSON body' });
+    }
+
+    const { zipCode } = body;
     if (!zipCode) {
         return res.status(400).json({ error: 'ZIP code is required' });
     }
