@@ -609,6 +609,66 @@ class StayAndImproveFlow {
         });
     }
 
+    async fetchSchools() {
+        try {
+            const response = await fetch('/api/schools-stay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    zipCode: this.zipCode
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `Failed to fetch schools: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (!data || !data.schools) {
+                throw new Error('Invalid school data received');
+            }
+
+            this.schoolsData = data.schools;
+            this.renderSchools();
+        } catch (error) {
+            console.error('Error fetching schools:', error);
+            throw new Error('Failed to fetch schools');
+        }
+    }
+
+    async fetchTownshipInfo() {
+        try {
+            const response = await fetch('/api/township', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    zipCode: this.zipCode
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `Failed to fetch township info: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (!data || !data.township) {
+                throw new Error('Invalid township data received');
+            }
+
+            this.renderTownshipInfo(data.township);
+            return data;
+        } catch (error) {
+            console.error('Error fetching township info:', error);
+            throw new Error('Failed to fetch township info');
+        }
+    }
+
     async handleStayOptionClick() {
         const detailsSection = document.getElementById('stay-improve-details');
         const loadingIndicator = detailsSection.querySelector('.loading-indicator');
@@ -623,10 +683,10 @@ class StayAndImproveFlow {
         try {
             // Get zip code from local storage
             const quizData = JSON.parse(localStorage.getItem('personalizationQuiz') || '{}');
-            console.log('Quiz data from localStorage:', quizData); // Debug log
+            console.log('Quiz data from localStorage:', quizData);
             
             this.zipCode = quizData.zipCode || '';
-            console.log('Retrieved zip code:', this.zipCode); // Debug log
+            console.log('Retrieved zip code:', this.zipCode);
             
             if (!this.zipCode) {
                 throw new Error('Please complete the personalization quiz first to provide your zip code.');
@@ -644,54 +704,6 @@ class StayAndImproveFlow {
             alert(error.message || 'An error occurred while loading your community information. Please try again.');
         } finally {
             loadingIndicator.classList.add('hidden');
-        }
-    }
-
-    async fetchTownshipInfo() {
-        try {
-            const response = await fetch('/api/township', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    zipCode: this.zipCode
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error('Error fetching township info:', error);
-            throw new Error('Failed to fetch township info');
-        }
-    }
-
-    async fetchSchools() {
-        try {
-            const response = await fetch('/api/schools-stay', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    zipCode: this.zipCode
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error('Error fetching schools:', error);
-            throw new Error('Failed to fetch schools');
         }
     }
 

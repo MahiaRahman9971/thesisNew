@@ -1,7 +1,6 @@
 require('dotenv').config();
 const OpenAI = require('openai');
 
-// Initialize OpenAI
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
@@ -28,55 +27,59 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with real data about the township or area:
+        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with realistic township/neighborhood data:
         {
-            "name": "string",
-            "description": "string",
-            "demographics": {
-                "population": "number",
-                "medianIncome": "string with dollar amount",
-                "education": "string describing education levels"
-            },
-            "opportunities": {
-                "jobs": "string describing job market",
-                "education": "string describing educational opportunities",
-                "housing": "string describing housing market"
+            "township": {
+                "name": "Sample Township",
+                "population": 50000,
+                "medianIncome": 75000,
+                "demographics": {
+                    "white": 45,
+                    "black": 25,
+                    "hispanic": 20,
+                    "asian": 10
+                },
+                "education": {
+                    "highSchoolOrHigher": 90,
+                    "bachelorOrHigher": 45
+                },
+                "amenities": {
+                    "parks": 5,
+                    "libraries": 2,
+                    "communityCenter": true,
+                    "publicTransport": true
+                }
             }
         }`;
 
-        const response = await openai.chat.completions.create({
+        const completion = await openai.chat.completions.create({
             model: 'gpt-4',
             messages: [
                 {
                     role: 'system',
-                    content: 'You are a JSON API. Always respond with valid JSON data only. Never include explanations or markdown formatting.'
+                    content: 'You are a JSON API. Always respond with valid JSON data only.'
                 },
                 {
                     role: 'user',
                     content: prompt
                 }
             ],
-            temperature: 0.3,
+            temperature: 0.3
         });
 
-        const content = response.choices[0].message.content;
-        
-        try {
-            const jsonData = JSON.parse(content);
-            res.status(200).json(jsonData);
-        } catch (parseError) {
-            console.error('Failed to parse OpenAI response:', content);
-            res.status(500).json({ 
-                error: true, 
-                message: 'Failed to parse response',
-                details: content.substring(0, 200)
-            });
+        const content = completion.choices[0].message.content;
+        const data = JSON.parse(content);
+
+        if (!data || !data.township) {
+            throw new Error('Invalid response format from AI');
         }
+
+        res.json(data);
     } catch (error) {
-        console.error('OpenAI API error:', error);
-        res.status(500).json({
-            error: true,
-            message: error.message
+        console.error('Error fetching township data:', error);
+        res.status(500).json({ 
+            error: 'Failed to fetch township data',
+            details: error.message 
         });
     }
 };

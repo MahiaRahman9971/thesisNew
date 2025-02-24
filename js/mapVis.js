@@ -279,6 +279,7 @@ async function updateMapLayers(center) {
 
 async function initializeMap() {
     try {
+        mapboxgl.accessToken = 'pk.eyJ1IjoibWFoaWFyIiwiYSI6ImNtNDY1YnlwdDB2Z2IybHEwd2w3MHJvb3cifQ.wJqnzFFTwLFwYhiPG3SWJA';
         const quizData = JSON.parse(localStorage.getItem('personalizationQuiz') || '{}');
         if (!quizData.zipCode) {
             console.log('No ZIP code found in quiz data');

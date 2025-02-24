@@ -1,7 +1,6 @@
 require('dotenv').config();
 const OpenAI = require('openai');
 
-// Initialize OpenAI
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
@@ -28,58 +27,74 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with real data about local schools:
+        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with realistic school data:
         {
             "schools": [
                 {
-                    "name": "string",
-                    "type": "string (public/private/charter)",
-                    "grades": "string",
-                    "rating": "number 1-10",
-                    "programs": ["string array of special programs"],
-                    "address": "string",
+                    "id": "1",
+                    "name": "Sample Elementary School",
+                    "type": "Public",
+                    "grades": "K-5",
+                    "rating": 8,
+                    "address": "123 School St",
+                    "distance": "0.5 miles",
+                    "demographics": {
+                        "totalStudents": 500,
+                        "studentTeacherRatio": "15:1",
+                        "diversity": {
+                            "white": 40,
+                            "black": 25,
+                            "hispanic": 20,
+                            "asian": 15
+                        }
+                    },
+                    "academicPerformance": {
+                        "mathProficiency": 85,
+                        "readingProficiency": 88,
+                        "graduationRate": 95
+                    },
+                    "programs": [
+                        "Special Education",
+                        "Gifted Program",
+                        "ESL Support"
+                    ],
                     "contact": {
-                        "phone": "string",
-                        "email": "string",
-                        "website": "string"
+                        "phone": "(555) 123-4567",
+                        "email": "info@school.edu",
+                        "website": "www.school.edu"
                     }
                 }
             ]
         }`;
 
-        const response = await openai.chat.completions.create({
+        const completion = await openai.chat.completions.create({
             model: 'gpt-4',
             messages: [
                 {
                     role: 'system',
-                    content: 'You are a JSON API. Always respond with valid JSON data only. Never include explanations or markdown formatting.'
+                    content: 'You are a JSON API. Always respond with valid JSON data only.'
                 },
                 {
                     role: 'user',
                     content: prompt
                 }
             ],
-            temperature: 0.3,
+            temperature: 0.3
         });
 
-        const content = response.choices[0].message.content;
-        
-        try {
-            const jsonData = JSON.parse(content);
-            res.status(200).json(jsonData);
-        } catch (parseError) {
-            console.error('Failed to parse OpenAI response:', content);
-            res.status(500).json({ 
-                error: true, 
-                message: 'Failed to parse response',
-                details: content.substring(0, 200)
-            });
+        const content = completion.choices[0].message.content;
+        const data = JSON.parse(content);
+
+        if (!data || !data.schools) {
+            throw new Error('Invalid response format from AI');
         }
+
+        res.json(data);
     } catch (error) {
-        console.error('OpenAI API error:', error);
-        res.status(500).json({
-            error: true,
-            message: error.message
+        console.error('Error fetching schools:', error);
+        res.status(500).json({ 
+            error: 'Failed to fetch schools',
+            details: error.message 
         });
     }
 };
