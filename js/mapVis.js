@@ -162,40 +162,48 @@ class MapVis {
 }
 
 let mapVis;
+let commutingZonesData = [];
+let currentView = 'commuting';
+let userDetails = {};
 
+// Load initial data
 let promises = [
-    d3.csv("data/mobility_counties.csv"),
-    d3.json("https://d3js.org/us-10m.v1.json"),
-    d3.json("https://d3js.org/us-10m.v1.json")
+    d3.csv("../data/mobility_counties.csv"),
+    d3.json("../data/counties-10m.json"),
+    d3.json("../data/states-10m.json"),
+    d3.json("../data/us-commuting-zones.json"),
+    // Load commuting zones opportunity data
+    d3.csv("../data/commuting_zones_opp/cz_kfr_rW_gM_p25.csv"),
+    d3.csv("../data/commuting_zones_opp/cz_kfr_rW_gF_p25.csv"),
+    d3.csv("../data/commuting_zones_opp/cz_kfr_rB_gM_p25.csv"),
+    d3.csv("../data/commuting_zones_opp/cz_kfr_rB_gF_p25.csv"),
+    d3.csv("../data/commuting_zones_opp/cz_kfr_rH_gM_p25.csv"),
+    d3.csv("../data/commuting_zones_opp/cz_kfr_rH_gF_p25.csv")
 ];
 
 Promise.all(promises)
     .then(function(data) {
-        // Prepare the data
+        // Store the loaded data
         mobilityData = data[0];
         geoData = data[1];
         stateData = data[2];
-
+        commutingZonesData = data[3];
+        
         // Initialize visualization
         mapVis = new MapVis("map-vis", geoData, mobilityData, stateData);
+        
+        // Initialize controls after data is loaded
+        initializeMapControls();
+        initializeForm();
     })
     .catch(function(err) {
-        console.log(err);
+        console.log('Error loading data:', err);
     });
 
 // Initialize map and variables
 mapboxgl.accessToken = 'pk.eyJ1IjoibWFoaWFyIiwiYSI6ImNtNDY1YnlwdDB2Z2IybHEwd2w3MHJvb3cifQ.wJqnzFFTwLFwYhiPG3SWJA';
 
 let map;
-let currentView = 'commuting';
-let userDetails = {};
-
-// Initialize map when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    initializeMap();
-    initializeForm();
-    initializeMapControls();
-});
 
 function initializeMap() {
     if (map) return; // Don't initialize if already exists
@@ -218,21 +226,31 @@ function initializeMap() {
 }
 
 function initializeMapControls() {
-    const mapControls = document.querySelectorAll('.map-toggle');
-    mapControls.forEach(control => {
-        control.addEventListener('click', (e) => {
-            const view = e.target.dataset.view;
-            if (view === currentView) return;
+    const mapControls = document.getElementById('map-controls');
+    if (!mapControls) {
+        console.log('Map controls element not found, skipping initialization');
+        return;
+    }
+    
+    try {
+        mapControls.addEventListener('change', updateMapView);
+    } catch (error) {
+        console.log('Error setting up map controls:', error);
+    }
+}
 
-            // Update active state
-            document.querySelector('.map-toggle.active').classList.remove('active');
-            e.target.classList.add('active');
-
-            // Switch map view
-            currentView = view;
-            loadMapData(view);
-        });
-    });
+async function updateMapLayers(center) {
+    if (!center || !commutingZonesData) {
+        console.log('Missing required data for map update');
+        return;
+    }
+    
+    try {
+        // Your existing updateMapLayers code here
+        console.log('Updating map layers with center:', center);
+    } catch (error) {
+        console.log('Error updating map layers:', error);
+    }
 }
 
 function initializeForm() {
@@ -615,3 +633,10 @@ function updateScores(scores) {
         totalScoreElement.textContent = totalScore;
     }
 }
+
+// Initialize map when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    initializeMap();
+    initializeForm();
+    initializeMapControls();
+});

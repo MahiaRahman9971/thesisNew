@@ -641,20 +641,68 @@ class StayAndImproveFlow {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ zipCode: this.zipCode })
+                body: JSON.stringify({
+                    zipCode: this.zipCode
+                })
             });
 
             if (!response.ok) {
-                throw new Error('Failed to fetch township info');
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
-            
-            // Update UI
-            this.renderTownshipInfo(data);
+            return data;
         } catch (error) {
             console.error('Error fetching township info:', error);
-            throw error;
+            throw new Error('Failed to fetch township info');
+        }
+    }
+
+    async fetchSchools() {
+        try {
+            const response = await fetch('/api/schools-stay', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    zipCode: this.zipCode
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching schools:', error);
+            throw new Error('Failed to fetch schools');
+        }
+    }
+
+    async fetchCommunityPrograms() {
+        try {
+            const response = await fetch('/api/programs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    zipCode: this.zipCode
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching community programs:', error);
+            throw new Error('Failed to fetch community programs');
         }
     }
 
@@ -694,136 +742,7 @@ class StayAndImproveFlow {
         }
     }
 
-    async fetchSchools() {
-        try {
-            const response = await fetch('/api/schools-stay', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    zipCode: this.zipCode,
-                    childAge: this.getChildAge()
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch schools');
-            }
-
-            const data = await response.json();
-            this.schoolsData = data.schools || [];
-            
-            // Render all schools initially
-            this.renderSchools();
-        } catch (error) {
-            console.error('Error fetching schools:', error);
-            throw error;
-        }
-    }
-
-    async fetchCommunityPrograms() {
-        try {
-            const response = await fetch('/api/programs', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    zipCode: this.zipCode 
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch community programs');
-            }
-
-            const data = await response.json();
-            // Ensure programsData is always an array
-            this.programsData = Array.isArray(data.programs) ? data.programs : [];
-            
-            // Render all programs initially
-            this.renderPrograms();
-        } catch (error) {
-            console.error('Error fetching community programs:', error);
-            this.programsData = [];
-            this.renderPrograms();
-        }
-    }
-
-    renderSchools() {
-        const schoolsList = document.getElementById('schools-list');
-        if (!schoolsList) return;
-        
-        schoolsList.innerHTML = '';
-        
-        if (!Array.isArray(this.schoolsData)) {
-            console.error('Schools data is not an array:', this.schoolsData);
-            return;
-        }
-
-        // Sort schools by rating (highest to lowest)
-        const sortedSchools = [...this.schoolsData].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-
-        if (sortedSchools.length === 0) {
-            schoolsList.innerHTML = '<p class="no-results">No schools found.</p>';
-            return;
-        }
-
-        sortedSchools.forEach(school => {
-            const schoolElement = document.createElement('div');
-            schoolElement.className = 'school-card';
-            
-            schoolElement.innerHTML = `
-                <div class="school-header">
-                    <h4 class="school-name">${school.name}</h4>
-                    <div class="school-rating">${this.generateStars(school.rating)}</div>
-                </div>
-                <div class="school-score">${school.score || 'N/A'}</div>
-                <p class="school-description">${school.description || 'No description available'}</p>
-            `;
-            
-            schoolsList.appendChild(schoolElement);
-        });
-    }
-
-    renderPrograms() {
-        const programsList = document.getElementById('programs-list');
-        if (!programsList) return;
-        
-        programsList.innerHTML = '';
-        
-        if (this.programsData.length === 0) {
-            programsList.innerHTML = '<p class="no-results">No programs found.</p>';
-            return;
-        }
-
-        this.programsData.forEach(program => {
-            const programElement = document.createElement('div');
-            programElement.className = 'program-card';
-            programElement.dataset.programId = program.id;
-            
-            const isSelected = this.selectedPrograms.has(program.id);
-            
-            programElement.innerHTML = `
-                <div class="program-header">
-                    <h4 class="program-title">${program.name}</h4>
-                    <span class="program-tag">${program.category || 'General'}</span>
-                </div>
-                <p class="program-description">${program.description || 'No description available'}</p>
-                <div class="program-contact">${program.contact || 'Contact information not available'}</div>
-                <button class="select-program-btn ${isSelected ? 'selected' : ''}" data-program-id="${program.id}">
-                    ${isSelected ? 'Selected' : 'Select Program'}
-                </button>
-            `;
-            
-            programsList.appendChild(programElement);
-        });
-
-        this.updateSelectedProgramsList();
-    }
-
-    handleProgramSelection(programId) {
+    async handleProgramSelection(programId) {
         if (!programId) return;
         
         console.log('Handling program selection:', programId); // Debug log
@@ -914,6 +833,78 @@ class StayAndImproveFlow {
     getChildAge() {
         const quizData = JSON.parse(localStorage.getItem('personalizationQuiz') || '{}');
         return parseInt(quizData['child1-age']) || 10; // Default to 10 if not found
+    }
+
+    renderSchools() {
+        const schoolsList = document.getElementById('schools-list');
+        if (!schoolsList) return;
+        
+        schoolsList.innerHTML = '';
+        
+        if (!Array.isArray(this.schoolsData)) {
+            console.error('Schools data is not an array:', this.schoolsData);
+            return;
+        }
+
+        // Sort schools by rating (highest to lowest)
+        const sortedSchools = [...this.schoolsData].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+
+        if (sortedSchools.length === 0) {
+            schoolsList.innerHTML = '<p class="no-results">No schools found.</p>';
+            return;
+        }
+
+        sortedSchools.forEach(school => {
+            const schoolElement = document.createElement('div');
+            schoolElement.className = 'school-card';
+            
+            schoolElement.innerHTML = `
+                <div class="school-header">
+                    <h4 class="school-name">${school.name}</h4>
+                    <div class="school-rating">${this.generateStars(school.rating)}</div>
+                </div>
+                <div class="school-score">${school.score || 'N/A'}</div>
+                <p class="school-description">${school.description || 'No description available'}</p>
+            `;
+            
+            schoolsList.appendChild(schoolElement);
+        });
+    }
+
+    renderPrograms() {
+        const programsList = document.getElementById('programs-list');
+        if (!programsList) return;
+        
+        programsList.innerHTML = '';
+        
+        if (this.programsData.length === 0) {
+            programsList.innerHTML = '<p class="no-results">No programs found.</p>';
+            return;
+        }
+
+        this.programsData.forEach(program => {
+            const programElement = document.createElement('div');
+            programElement.className = 'program-card';
+            programElement.dataset.programId = program.id;
+            
+            const isSelected = this.selectedPrograms.has(program.id);
+            
+            programElement.innerHTML = `
+                <div class="program-header">
+                    <h4 class="program-title">${program.name}</h4>
+                    <span class="program-tag">${program.category || 'General'}</span>
+                </div>
+                <p class="program-description">${program.description || 'No description available'}</p>
+                <div class="program-contact">${program.contact || 'Contact information not available'}</div>
+                <button class="select-program-btn ${isSelected ? 'selected' : ''}" data-program-id="${program.id}">
+                    ${isSelected ? 'Selected' : 'Select Program'}
+                </button>
+            `;
+            
+            programsList.appendChild(programElement);
+        });
+
+        this.updateSelectedProgramsList();
     }
 }
 
