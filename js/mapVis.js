@@ -199,19 +199,29 @@ Promise.all(promises)
                 hFemaleOpp
             ] = data;
 
+            // Parse CSV data if needed
+            const parseCSV = (csvData) => {
+                if (typeof csvData === 'string') {
+                    return csvData.split('\n')
+                        .map(row => row.split(','))
+                        .filter(row => row.length > 1);
+                }
+                return csvData;
+            };
+
             // Initialize opportunity data
             opportunityData = {
                 'White': {
-                    'Male': wMaleOpp,
-                    'Female': wFemaleOpp
+                    'Male': parseCSV(wMaleOpp),
+                    'Female': parseCSV(wFemaleOpp)
                 },
                 'Black': {
-                    'Male': bMaleOpp,
-                    'Female': bFemaleOpp
+                    'Male': parseCSV(bMaleOpp),
+                    'Female': parseCSV(bFemaleOpp)
                 },
                 'Hispanic': {
-                    'Male': hMaleOpp,
-                    'Female': hFemaleOpp
+                    'Male': parseCSV(hMaleOpp),
+                    'Female': parseCSV(hFemaleOpp)
                 }
             };
 
@@ -222,7 +232,6 @@ Promise.all(promises)
             
             // Initialize controls after data is loaded
             initializeMapControls();
-            initializeForm();
         } catch (error) {
             console.error('Error processing data:', error);
         }
@@ -306,6 +315,5 @@ async function initializeMap() {
 // Initialize map when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     initializeMap();
-    initializeForm();
     initializeMapControls();
 });

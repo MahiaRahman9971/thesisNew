@@ -622,7 +622,7 @@ class StayAndImproveFlow {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.error || `Failed to fetch schools: ${response.status}`);
             }
 
@@ -635,7 +635,7 @@ class StayAndImproveFlow {
             this.renderSchools();
         } catch (error) {
             console.error('Error fetching schools:', error);
-            throw new Error('Failed to fetch schools');
+            throw error;
         }
     }
 
@@ -652,7 +652,7 @@ class StayAndImproveFlow {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.error || `Failed to fetch township info: ${response.status}`);
             }
 
@@ -665,7 +665,37 @@ class StayAndImproveFlow {
             return data;
         } catch (error) {
             console.error('Error fetching township info:', error);
-            throw new Error('Failed to fetch township info');
+            throw error;
+        }
+    }
+
+    async fetchCommunityPrograms() {
+        try {
+            const response = await fetch('/api/programs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    zipCode: this.zipCode
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `Failed to fetch programs: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (!data || !data.programs) {
+                throw new Error('Invalid program data received');
+            }
+
+            this.programsData = data.programs;
+            this.renderPrograms();
+        } catch (error) {
+            console.error('Error fetching community programs:', error);
+            throw error;
         }
     }
 
@@ -704,72 +734,6 @@ class StayAndImproveFlow {
             alert(error.message || 'An error occurred while loading your community information. Please try again.');
         } finally {
             loadingIndicator.classList.add('hidden');
-        }
-    }
-
-    async fetchCommunityPrograms() {
-        try {
-            const response = await fetch('/api/programs', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    zipCode: this.zipCode
-                })
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to fetch community programs');
-            }
-
-            const data = await response.json();
-            if (!data || !data.programs) {
-                throw new Error('Invalid program data received');
-            }
-
-            this.programsData = data.programs;
-            this.renderPrograms();
-        } catch (error) {
-            console.error('Error fetching community programs:', error);
-            throw error;
-        }
-    }
-
-    renderTownshipInfo(data) {
-        const townshipName = document.getElementById('township-name');
-        const townshipDescription = document.getElementById('township-description');
-        const townshipWebsite = document.getElementById('township-website');
-        
-        if (townshipName) {
-            townshipName.textContent = data.townshipName || 'Township information not available';
-        }
-        
-        if (townshipDescription) {
-            if (Array.isArray(data.description) && data.description.length > 0) {
-                const bulletPoints = data.description
-                    .map(point => `<li>${point}</li>`)
-                    .join('');
-                townshipDescription.innerHTML = `<ul class="township-bullets">${bulletPoints}</ul>`;
-            } else {
-                townshipDescription.textContent = 'Description not available';
-            }
-        }
-        
-        if (townshipWebsite) {
-            if (data.websiteUrl) {
-                const url = data.websiteUrl.startsWith('http') ? data.websiteUrl : `https://${data.websiteUrl}`;
-                townshipWebsite.innerHTML = `
-                    <a href="${url}" class="township-link" target="_blank" rel="noopener noreferrer">
-                        Visit Township Website
-                    </a>
-                `;
-            } else {
-                townshipWebsite.innerHTML = `
-                    <span class="township-link disabled">Website not available</span>
-                `;
-            }
         }
     }
 
@@ -900,6 +864,42 @@ class StayAndImproveFlow {
             
             schoolsList.appendChild(schoolElement);
         });
+    }
+
+    renderTownshipInfo(data) {
+        const townshipName = document.getElementById('township-name');
+        const townshipDescription = document.getElementById('township-description');
+        const townshipWebsite = document.getElementById('township-website');
+        
+        if (townshipName) {
+            townshipName.textContent = data.townshipName || 'Township information not available';
+        }
+        
+        if (townshipDescription) {
+            if (Array.isArray(data.description) && data.description.length > 0) {
+                const bulletPoints = data.description
+                    .map(point => `<li>${point}</li>`)
+                    .join('');
+                townshipDescription.innerHTML = `<ul class="township-bullets">${bulletPoints}</ul>`;
+            } else {
+                townshipDescription.textContent = 'Description not available';
+            }
+        }
+        
+        if (townshipWebsite) {
+            if (data.websiteUrl) {
+                const url = data.websiteUrl.startsWith('http') ? data.websiteUrl : `https://${data.websiteUrl}`;
+                townshipWebsite.innerHTML = `
+                    <a href="${url}" class="township-link" target="_blank" rel="noopener noreferrer">
+                        Visit Township Website
+                    </a>
+                `;
+            } else {
+                townshipWebsite.innerHTML = `
+                    <span class="township-link disabled">Website not available</span>
+                `;
+            }
+        }
     }
 
     renderPrograms() {
