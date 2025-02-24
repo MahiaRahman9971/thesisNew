@@ -668,30 +668,26 @@ class StayAndImproveFlow {
         }
     }
 
-    async fetchCommunityPrograms() {
+    async fetchCommunityPrograms(zipCode) {
         try {
             const response = await fetch('/api/programs', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    zipCode: this.zipCode
-                })
+                body: JSON.stringify({ zipCode })
             });
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error || `Failed to fetch programs: ${response.status}`);
+                throw new Error(`Failed to fetch programs: ${response.status}`);
             }
 
             const data = await response.json();
             if (!data || !data.programs) {
-                throw new Error('Invalid program data received');
+                throw new Error('Invalid response format');
             }
 
-            this.programsData = data.programs;
-            this.renderPrograms();
+            return data.programs;
         } catch (error) {
             console.error('Error fetching community programs:', error);
             throw error;
@@ -725,7 +721,7 @@ class StayAndImproveFlow {
             await Promise.all([
                 this.fetchTownshipInfo(),
                 this.fetchSchools(),
-                this.fetchCommunityPrograms()
+                this.fetchCommunityPrograms(this.zipCode)
             ]);
             
         } catch (error) {
@@ -901,19 +897,19 @@ class StayAndImproveFlow {
         }
     }
 
-    renderPrograms() {
+    renderPrograms(programs) {
         const programsContainer = document.getElementById('programs-container');
         if (!programsContainer) {
             console.error('Programs container not found');
             return;
         }
 
-        if (!this.programsData || !this.programsData.length) {
+        if (!programs || !programs.length) {
             programsContainer.innerHTML = '<p class="text-center">No programs found for your area.</p>';
             return;
         }
 
-        const programsHTML = this.programsData.map(program => `
+        const programsHTML = programs.map(program => `
             <div class="program-card" data-program-id="${program.id}">
                 <div class="program-header">
                     <h3>${program.name}</h3>

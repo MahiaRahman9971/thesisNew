@@ -1,6 +1,7 @@
+const { OpenAI } = require('openai');
 require('dotenv').config();
-const OpenAI = require('openai');
 
+// Initialize OpenAI
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
 });
@@ -35,39 +36,69 @@ module.exports = async (req, res) => {
     }
 
     try {
-        // Return mock data
-        const mockData = {
+        const prompt = `For ZIP code ${zipCode}, provide ONLY this exact JSON structure with realistic township/neighborhood data:
+        {
             "township": {
-                "name": "Cambridge Township",
-                "population": 120000,
-                "medianIncome": 95000,
+                "name": "Township/Neighborhood Name",
+                "population": "number",
+                "medianIncome": "number",
                 "demographics": {
-                    "white": 45,
-                    "black": 25,
-                    "hispanic": 20,
-                    "asian": 10
+                    "white": "percentage",
+                    "black": "percentage",
+                    "hispanic": "percentage",
+                    "asian": "percentage"
                 },
                 "education": {
-                    "highSchoolOrHigher": 95,
-                    "bachelorOrHigher": 75
+                    "highSchoolOrHigher": "percentage",
+                    "bachelorOrHigher": "percentage"
                 },
                 "amenities": {
-                    "parks": 8,
-                    "libraries": 3,
-                    "communityCenter": true,
-                    "publicTransport": true
+                    "parks": "number",
+                    "libraries": "number",
+                    "communityCenter": "boolean",
+                    "publicTransport": "boolean"
                 },
                 "description": [
-                    "Vibrant university town with rich cultural diversity",
-                    "Strong focus on education and innovation",
-                    "Active community events and programs",
-                    "Excellent public transportation system"
+                    "key feature 1",
+                    "key feature 2",
+                    "key feature 3",
+                    "key feature 4"
                 ],
-                "websiteUrl": "www.cambridgema.gov"
+                "websiteUrl": "url"
             }
-        };
+        }
+        
+        Important rules:
+        1. Use realistic data for ${zipCode} area
+        2. Make sure all percentages add up correctly
+        3. Use realistic population and income numbers
+        4. Include 4-5 key features that highlight the area's unique characteristics
+        5. Ensure all amenity counts are realistic for the area size`;
 
-        res.json(mockData);
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4",
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a JSON API that returns information about townships and neighborhoods. Always respond with valid JSON data only."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            temperature: 0.7,
+            max_tokens: 1000
+        });
+
+        const content = completion.choices[0].message.content;
+        const data = JSON.parse(content);
+
+        if (!data || !data.township) {
+            throw new Error('Invalid response format from AI');
+        }
+
+        res.json(data);
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({ 
