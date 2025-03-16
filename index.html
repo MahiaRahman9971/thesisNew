@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economic Mobility Guide</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://unpkg.com/topojson-client@3"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <script src="js/script.js" defer></script>
+    <script src="js/mapVis.js" defer></script>
+    <link rel="stylesheet" href="css/chatWidget.css">
+</head>
+<body>
+    <header>
+        <nav class="navigation">
+            <div class="nav-content">
+                <div class="logo">Economic Mobility Guide</div>
+                <div class="nav-links">
+                    <a href="#welcome" class="nav-link">Home</a>
+                    <a href="#learn-section" class="nav-link">Learn</a>
+                    <a href="#quiz-section" class="nav-link">Personalize</a>
+                    <a href="#opportunity-map" class="nav-link">Opportunity Map</a>
+                    <a href="#take-action" class="nav-link">Take Action</a>
+                </div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section id="welcome" class="welcome-section">
+            <div class="welcome-content fade-in">
+                <h1>Building Your Child's Future</h1>
+                <p class="subtitle">A friendly guide to creating opportunities for your family</p>
+                <p class="welcome-description">
+                    We'll help you find the best opportunities for your children.
+                </p>
+                <div class="key-points">
+                    <ul>
+                        <li>Support your child's education</li>
+                        <li>Find resources</li>
+                        <li>Join community programs</li>
+                    </ul>
+                </div>
+                <p class="encouragement">Let's begin!</p>
+                <p>Please scroll down to explore the opportunities in your area.</p>
+            </div>
+        </section>
+
+        <section id="learn-section" class="content-section">
+            <div class="content">
+                <h1>Learn About Opportunity in the United States</h1>
+                <h2 class="map-title">Where You Live Shapes Your Children's Future</h2>
+                <div id="map-vis"></div>
+            
+                <div class="map-explanation">
+                    <div class="explanation-text">
+                        <h2>Why do opportunities vary by area?</h2>
+                        <p>Let's understand what makes some areas have more opportunities than others:</p>
+                    </div>
+                
+                    <div class="opportunity-factors">
+                        <div class="factor-card" data-factor="segregation">
+                            <h3>Segregation</h3>
+                            <p>How mixed or separated different communities are</p>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                        <div class="factor-card" data-factor="income">
+                            <h3>Income Inequality</h3>
+                            <p>The gap between high and low income families</p>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                        <div class="factor-card" data-factor="schools">
+                            <h3>School Quality</h3>
+                            <p>How good the local schools are</p>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                        <div class="factor-card" data-factor="family">
+                            <h3>Family Structure</h3>
+                            <p>Support systems within families</p>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                        <div class="factor-card" data-factor="social">
+                            <h3>Social Capital</h3>
+                            <p>Community connections and support</p>
+                            <button class="learn-more-btn">Learn More</button>
+                        </div>
+                    </div>
+
+                    <div class="better-future">
+                        <h2>How Can We Do Better?</h2>
+                        <div class="path-to-success">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <h3>Live in Good Areas</h3>
+                                <p>Consider moving to areas with better opportunities</p>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <h3>Use Opportunities</h3>
+                                <p>Take advantage of local programs and resources</p>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <h3>Good Education</h3>
+                                <p>Focus on quality education and college preparation</p>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <h3>Career Success</h3>
+                                <p>Build towards a rewarding career</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="call-to-action">
+                        <h2>Help Your Family!</h2>
+                        <p>Ready to explore opportunities in your area?</p>
+                        <button class="primary-btn" id="check-area-btn">Check Your Area</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="quiz-section" class="content-section">
+            <div class="quiz-container">
+                <h2>Personalization Quiz</h2>
+                <p class="quiz-description">Help us provide personalized guidance for your family's future</p>
+                
+                <form id="personalization-form" class="quiz-form">
+                    <div class="form-section parent-info">
+                        <h3>Parent Information</h3>
+                        <div class="parent-fields">
+                            <div class="form-group">
+                                <label for="zipCode">Zip Code*</label>
+                                <input type="text" id="zipCode" name="zipCode" required pattern="[0-9]{5}" maxlength="5" placeholder="Enter zip code">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="income">Annual Household Income*</label>
+                                <select id="income" name="income" required>
+                                    <option value="">Select income range</option>
+                                    <option value="<25k">Less than $25,000</option>
+                                    <option value="25-50k">$25,000 - $50,000</option>
+                                    <option value="50-75k">$50,000 - $75,000</option>
+                                    <option value="75-100k">$75,000 - $100,000</option>
+                                    <option value=">100k">More than $100,000</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="country">Country of Origin (Optional)</label>
+                                <input type="text" id="country" name="country" placeholder="Enter country">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section child-info">
+                        <h3>Child Information</h3>
+                        <div class="child-form">
+                            <h4>Child 1</h4>
+                            <div class="form-group">
+                                <label for="child1-name">Name*</label>
+                                <input type="text" id="child1-name" name="child1-name" required placeholder="Enter child's name">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="child1-gender">Gender*</label>
+                                <select id="child1-gender" name="child1-gender" required>
+                                    <option value="">Select gender</option>
+                                    <option value="M">Male</option>
+                                    <option value="F">Female</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="child1-age">Age*</label>
+                                <input type="number" id="child1-age" name="child1-age" min="0" max="18" required placeholder="Enter age">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="child1-ethnicity">Ethnicity*</label>
+                                <select id="child1-ethnicity" name="child1-ethnicity" required>
+                                    <option value="">Select ethnicity</option>
+                                    <option value="W">White</option>
+                                    <option value="B">Black</option>
+                                    <option value="H">Hispanic</option>
+                                    <option value="A">Asian</option>
+                                    <option value="NA">Native American</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <div class="submit-wrapper">
+                            <button type="submit" class="submit-btn">Update Assessment</button>
+                            <div class="success-checkmark" id="submit-success"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section id="opportunity-map" class="content-section">
+            <div class="opportunity-container">
+                <h2>Opportunity Map</h2>
+                <p class="section-description">Explore economic mobility across different regions</p>
+                
+                <div class="opportunity-content">
+                    <div class="map-side">
+                        <div id="zip-map"></div>
+                        <div class="map-controls">
+                            <button class="map-toggle active" data-view="commuting">Commuting Zones</button>
+                            <button class="map-toggle" data-view="census">Census Tracts</button>
+                        </div>
+                    </div>
+                    
+                    <div class="scores-side">
+                        <div class="score-card">
+                            <h3>Opportunity Score</h3>
+                            <div class="total-score">
+                                <span id="total-score">--</span>
+                                <span class="out-of">out of 100</span>
+                            </div>
+                            
+                            <div class="score-breakdown">
+                                <h4>Score Breakdown</h4>
+                                <div class="score-item">
+                                    <div class="score-label">Segregation</div>
+                                    <div class="score-bar-container">
+                                        <div class="score-bar" id="segregation-score" style="width: 0%"></div>
+                                        <span class="score-value">--</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="score-item">
+                                    <div class="score-label">Income Inequality</div>
+                                    <div class="score-bar-container">
+                                        <div class="score-bar" id="inequality-score" style="width: 0%"></div>
+                                        <span class="score-value">--</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="score-item">
+                                    <div class="score-label">School Quality</div>
+                                    <div class="score-bar-container">
+                                        <div class="score-bar" id="school-score" style="width: 0%"></div>
+                                        <span class="score-value">--</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="score-item">
+                                    <div class="score-label">Family Structure</div>
+                                    <div class="score-bar-container">
+                                        <div class="score-bar" id="family-score" style="width: 0%"></div>
+                                        <span class="score-value">--</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="score-item">
+                                    <div class="score-label">Social Capital</div>
+                                    <div class="score-bar-container">
+                                        <div class="score-bar" id="social-score" style="width: 0%"></div>
+                                        <span class="score-value">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="take-action" class="content-section">
+            <div class="take-action-container">
+                <h2>Take Action</h2>
+                <p class="section-description">Based on your community's opportunity score, here are some actions you can consider:</p>
+
+                <div class="score-summary">
+                    <div class="current-score">
+                        <h3>Your Community Score</h3>
+                        <div class="score-circle">
+                            <span id="community-score">5</span>
+                            <span class="score-denominator">/10</span>
+                        </div>
+                    </div>
+                    <div class="improvement-areas">
+                        <h3>Areas for Improvement</h3>
+                        <ul id="improvement-list">
+                            <li>School Quality</li>
+                            <li>Community Programs</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="action-options">
+                    <h3>What would you like to do?</h3>
+                    
+                    <div class="action-cards">
+                        <div class="action-card" id="stay-option">
+                            <h4>Stay & Improve</h4>
+                            <div class="card-content">
+                                <div class="initial-content">
+                                    <p>Work with your community to improve opportunities:</p>
+                                    <ul>
+                                        <li>Join the PTA or school board</li>
+                                        <li>Advocate for better community programs</li>
+                                        <li>Connect with local representatives</li>
+                                        <li>Start community initiatives</li>
+                                    </ul>
+                                    <button class="action-btn stay-btn" id="stay-action-btn">Choose This Option</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="action-card" id="move-option">
+                            <h4>Explore New Areas</h4>
+                            <div class="card-content">
+                                <p>Find communities with better opportunities:</p>
+                                <ul>
+                                    <li>Compare different neighborhoods</li>
+                                    <li>Find better schools</li>
+                                    <li>Discover available resources</li>
+                                    <li>Plan your move</li>
+                                </ul>
+                                <button class="action-btn move-btn" id="move-action-btn">Choose This Option</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="stay-improve-details" class="content-section hidden">
+                    <div class="stay-improve-container">
+                        <h2>Your Community Details</h2>
+                        <div class="loading-indicator hidden">Loading...</div>
+                        
+                        <div class="township-info">
+                            <h3>Township Information</h3>
+                            <div id="township-name"></div>
+                            <div id="township-description"></div>
+                            <div id="township-website"></div>
+                        </div>
+
+                        <div class="schools-info">
+                            <h3>Local Schools</h3>
+                            <div id="schools-list"></div>
+                        </div>
+
+                        <div class="programs-info">
+                            <h3>Community Programs</h3>
+                            <div id="programs-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="action-plan-summary" class="content-section" style="display: none;">
+            <div class="action-plan-container">
+                <h2>Finalized Action Plan</h2>
+                <p class="section-description">Here's a summary of your choices and next steps for your family's move.</p>
+
+                <div class="action-plan-content">
+                    <div id="child-info-section" class="summary-section">
+                        <h3 id="child-name-header">Child Information</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <strong>Name:</strong>
+                                <span id="summary-child-name">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Age:</strong>
+                                <span id="summary-child-age">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Gender:</strong>
+                                <span id="summary-child-gender">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Ethnicity:</strong>
+                                <span id="summary-child-ethnicity">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Country of Origin:</strong>
+                                <span id="summary-country">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="summary-section">
+                        <h3>Your Choices</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <strong>ZIP Code:</strong>
+                                <span id="summary-zipcode">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Neighborhood:</strong>
+                                <span id="summary-neighborhood">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Selected School:</strong>
+                                <span id="summary-school">--</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Community Programs:</strong>
+                                <span id="summary-programs">--</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="next-steps summary-section">
+                        <h3>Recommended Next Steps</h3>
+                        <div class="checklist">
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step1">
+                                <label for="step1">Contact the selected school to ask about transfer requirements or enrollment deadlines</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step2">
+                                <label for="step2">Research housing options in the chosen neighborhood</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step3">
+                                <label for="step3">Contact community programs for enrollment information</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step4">
+                                <label for="step4">Check commute times or transportation options to the chosen school and workplaces</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step5">
+                                <label for="step5">Collect all necessary documents (child’s transcripts, vaccination records, etc.)</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step6">
+                                <label for="step6">Update mailing address with the post office, banks, and other important contacts</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step7">
+                                <label for="step7">Notify your child’s current school about the transfer</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step8">
+                                <label for="step8">Look into local healthcare providers and doctors</label>
+                            </div>
+                            <div class="checklist-item">
+                                <input type="checkbox" id="step9">
+                                <label for="step9">Research local community resources and support groups</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="edit-choices" class="secondary-btn">Edit My Choices</button>
+                        <button id="download-summary" class="primary-btn">Download PDF Summary</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/scroll.js"></script>
+    <script type="module">
+        import ChatWidget from './js/chatWidget.js';
+        
+        // Initialize chat widget
+        const chatWidget = new ChatWidget();
+        chatWidget.init();
+    </script>
+</body>
+</html>
